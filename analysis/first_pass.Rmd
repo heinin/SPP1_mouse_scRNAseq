@@ -1,0 +1,511 @@
+---
+title: "SPP1 and CAR-treated mouse tumors: Annotation and basic analysis"
+author: "heinin"
+date: "2025-01-02"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+  html_notebook: default
+editor_options:
+  chunk_output_type: console
+---
+
+### Libraries and environment variables
+
+```{r, message = F, warning = F, results = 'hide'}
+
+library(workflowr)
+library(Seurat)
+library(googlesheets4)
+library(tidyverse)
+library(plyr)
+library(UpSetR)
+library(ggrepel)
+library(enrichR)
+library(patchwork)
+library(biomaRt)
+library(scProportionTest)
+
+setwd("/home/hnatri/SPP1_mouse_scRNAseq/")
+set.seed(1234)
+options(future.globals.maxSize = 30000 * 1024^2)
+reduction <- "integratedSCTumap"
+
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/CART_plot_functions.R")
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
+source("/home/hnatri/SingleCellBestPractices/scripts/preprocessing_qc_module.R")
+source("/home/hnatri/SingleCellBestPractices/scripts/integration_module.R")
+
+# Cluster annotations
+gs4_deauth()
+cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
+cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
+
+```
+
+### Helper functions
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+
+
+
+```
+
+### Import data
+
+Core ran CCA integration
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+
+seurat_data <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/ROUND1/Seurat.rds")
+unique(seurat_data$orig.ident)
+
+DimPlot(seurat_data, reduction = "integrated.cca")
+
+```
+
+#### QC
+
+```{r, message = F, warning = F, fig.width = 7, fig.height = 3, results = 'hide'}
+
+VlnPlot(seurat_data, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"),
+        pt.size = 0)
+
+```
+
+```{r, message = F, warning = F, fig.width = 9, fig.height = 6, results = 'hide'}
+
+par(mfrow=c(2,3))
+
+# PLOTS 1 & 2: nCount vs. nFeature
+smoothScatter(log2(seurat_data$nCount_RNA), log2(seurat_data$nCount_RNA),
+              xlab = "log2(nCount_RNA)", ylab = "log2(nFeature_RNA)")
+
+smoothScatter(seurat_data$nCount_RNA, seurat_data$nCount_RNA,
+              xlab = "nCount_RNA", ylab = "nFeature_RNA")
+
+# PLOTS 3 & 4: nCount vs. percent.mt_RNA
+smoothScatter(seurat_data$percent.mt, log2(seurat_data$nCount_RNA),
+              xlab = "% MT", ylab = "log2(nCount_RNA)")
+
+smoothScatter(seurat_data$percent.mt, seurat_data$nCount_RNA,
+              xlab = "% MT", ylab = "nCount_RNA")
+abline(v = 10, h = 1000, 
+       lty = "dashed", lwd = 1.25, col = "red")
+
+# PLOTS 5 & 6: nFeature vs. percent.mt_RNA
+smoothScatter(seurat_data$percent.mt, log2(seurat_data$nFeature_RNA),
+              xlab = "% MT", ylab = "log2(nFeature_RNA)")
+
+smoothScatter(seurat_data$percent.mt, seurat_data$nFeature_RNA,
+              xlab = "% MT", ylab = "nFeature_RNA")
+abline(v = 10, h = 500, 
+       lty = "dashed", lwd = 1.25, col = "red")
+
+
+```
+
+### Clustering and UMAP construction
+
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide', eval = F}
+
+# Normalizing and scaling
+seurat_data <- SCTransform(seurat_data,
+                           variable.features.n = 1000,
+                           #vars.to.regress = c(""),
+                           vst.flavor = "v2",
+                           return.only.var.genes = T,
+                           verbose = F)
+
+# Adding cell cycle scores
+s.genes <- cc.genes$s.genes
+g2m.genes <- cc.genes$g2m.genes
+
+# Converting human gene names to mouse
+mouse_human_genes <- read.csv("http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt",sep="\t")
+
+mouse <- split.data.frame(mouse_human_genes,mouse_human_genes$Common.Organism.Name)[[2]]
+human <- split.data.frame(mouse_human_genes,mouse_human_genes$Common.Organism.Name)[[1]]
+mouse <- mouse[,c(1,4)]
+human <- human[,c(1,4)]
+mh_data <- merge.data.frame(mouse, human, by = "DB.Class.Key",all.y = TRUE)
+
+s.genes <- mh_data %>% filter(Symbol.y %in% s.genes) %>%
+  dplyr::select(Symbol.x) %>% unlist() %>% as.character()
+g2m.genes <- mh_data %>% filter(Symbol.y %in% g2m.genes) %>%
+  dplyr::select(Symbol.x) %>% unlist() %>% as.character()
+
+seurat_data <- CellCycleScoring(seurat_data,
+                                s.features = s.genes,
+                                g2m.features = g2m.genes,
+                                set.ident = F)
+
+### Rerunning integration
+vars_to_regress <- c("G2M.Score",
+                     "S.Score",
+                     "nCount_RNA",
+                     "nFeature_RNA",
+                     "percent.mt")
+
+DefaultAssay(seurat_data) <- "RNA"
+seurat_data <- JoinLayers(seurat_data)
+seurat_list <- SplitObject(seurat_data, split.by = "orig.ident")
+
+# Calling doublets
+seurat_list <- run_sctransform(seurat_list)
+seurat_list <- run_doubletfinder(sample_seurat_list = seurat_list)
+
+# Removing doublets
+seurat_list <- lapply(seurat_list, function(xx){
+  subset(xx, subset = doublet_finder == "Singlet")
+})
+
+# Integrating
+seurat_list <- run_sctransform(seurat_list,
+                               vars_to_regress = vars_to_regress)
+integrated_data <- sct_rpca_integration(seurat_list,
+                                        ndims = 8)
+
+#saveRDS(integrated_data, "/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+
+```
+
+### Visualizing clusters, marker expression
+
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
+
+integrated_data <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+integrated_data$cluster <- integrated_data$integratedSCTsnn_res.0.3
+table(integrated_data$cluster)
+
+DimPlot(integrated_data,
+        group.by = "cluster",
+        cols = carspp1_cluster_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("integratedSCTsnn_res.0.3") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+DimPlot(integrated_data,
+        group.by = "orig.ident",
+        #cols = jak1_celltype_col,
+        reduction = reduction,
+        #label = T,
+        #label.box = T,
+        #label.size = 3,
+        #repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("Sample") +
+  theme_classic() +
+  #NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+DimPlot(integrated_data,
+        group.by = "Phase",
+        #cols = jak1_celltype_col,
+        reduction = reduction,
+        #label = T,
+        #label.box = T,
+        #label.size = 3,
+        #repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("Phase") +
+  theme_classic() +
+  #NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+```
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
+
+DimPlot(integrated_data,
+        group.by = "cluster",
+        split.by = "orig.ident",
+        cols = carspp1_cluster_col,
+        reduction = reduction,
+        ncol = 2,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+```
+
+### Marker expression and cell type annotation
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide', eval = F}
+
+# Converting mouse gene names to human
+mouse_human_genes <- read.csv("http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt", sep="\t")
+
+convert_mouse_to_human <- function(gene_list){
+  gene_names <- as.data.frame(matrix(nrow = length(gene_list),
+                                     ncol = 2))
+  colnames(gene_names) <- c("mouse", "human")
+  rownames(gene_names) <- gene_list
+  gene_names$mouse <- gene_list
+  
+  for(gene in gene_list){
+    class_key = (mouse_human_genes %>% filter(Symbol == gene & Common.Organism.Name=="mouse, laboratory"))[['DB.Class.Key']]
+    if(!identical(class_key, integer(0)) ){
+      human_genes = (mouse_human_genes %>% filter(DB.Class.Key == class_key & Common.Organism.Name=="human"))[,"Symbol"]
+      
+      if(length(human_genes)==0){
+        gene_names[gene, "human"] <- NA
+      } else if (length(human_genes)>1){
+        #  human_genes <- paste0(human_genes, collapse = ", ")
+        bind_df <- data.frame("mouse" = rep(gene, times = length(human_genes)),
+                              "human" = human_genes)
+        gene_names <- rbind(gene_names, bind_df)
+      } else {
+        gene_names[gene, "human"] <- human_genes
+      }
+    }
+  }
+  return(gene_names)
+}
+
+gene_names <- convert_mouse_to_human(rownames(integrated_data@assays$RNA))
+
+length(rownames(integrated_data@assays$RNA))
+dim(gene_names)
+
+# Keeping mouse genes with a single human ortholog
+gene_names <- gene_names %>%
+  group_by(mouse) %>%
+  filter(!is.na(human),
+         n() == 1) %>%
+  ungroup()
+
+DefaultAssay(integrated_data) <- "RNA"
+integrated_data <- JoinLayers(integrated_data)
+assay_data <- GetAssayData(integrated_data, slot = "counts")
+assay_data <- assay_data[which(rownames(assay_data) %in% gene_names$mouse),]
+new_names <- rownames(assay_data)
+new_names <- mapvalues(x = new_names,
+                       from = gene_names$mouse,
+                       to = gene_names$human)
+rownames(assay_data) <- new_names
+
+integrated_data[["RNA_human"]] <- CreateAssayObject(assay_data,
+                                                    min.cells = 0,
+                                                    min.features = 0)
+DefaultAssay(integrated_data) <- "RNA_human"
+integrated_data <- NormalizeData(integrated_data)
+
+#saveRDS(integrated_data, "/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+
+```
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
+
+FeaturePlot(integrated_data,
+            #layer = "RNA",
+            slot = "data",
+            features = c("PTPRC", "CD3E", "CD4", "CD8A", "CD19", "ITGAM", "CD36", "CD14", "SPP1"),
+            order = T,
+            ncol = 3,
+            reduction = reduction,
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
+
+FeaturePlot(integrated_data,
+            #layer = "RNA",
+            slot = "data",
+            features = c("G2M.Score", "S.Score", "nCount_RNA", "nFeature_RNA", "percent.mt"),
+            order = T,
+            ncol = 3,
+            reduction = reduction,
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
+### Top markers and cell type annotations
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
+
+unique(integrated_data$cluster)
+carspp1_cluster_col
+
+markers <- presto::wilcoxauc(integrated_data,
+                             group_by = "cluster",
+                             assay = "data",
+                             seurat_assay = "RNA_human")
+
+#markers <- markers[-which(markers$feature %in% grep("MT-", markers$feature, value = T)),]
+#markers <- markers[-which(markers$feature %in% grep("^RP", markers$feature, value = T)),]
+
+plot_features <- markers %>%  group_by(group) %>% slice_max(order_by = auc, n = 5)
+
+create_dotplot_heatmap(seurat_object = integrated_data,
+                       plot_features = unique(plot_features$feature),
+                       group_var = "cluster",
+                       group_colors = carspp1_cluster_col,
+                       column_title = "",
+                       row_km = 5,
+                       col_km = 5,
+                       row.order = NULL,
+                       col.order = NULL)
+```
+
+### TME markers
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
+
+plot_features <- c("PTMA", "PFN1", "CFL1", "TMSB4X", "TPT1", "TMSB10", "MIF",
+                   "PDPN", "NLRP3", "IL1B", "CCL4", "S100A8", "S100A9",
+                   "S100A10", "TYROBP", "CD68", "ICAM1", "C1QA", "C1QB", "C1QC",
+                   "CD74", "AREG", "CD4", "APOE", "FABP5", "SPP1", "CD274",
+                   "CD96", "PTPRC", "CEMIP2", "KLRD1", "CD8A", "NKG7", "IL32",
+                   "CD3D", "BTG1", "IFITM2", "ITM2A", "SELL", "GZMB", "CD79A",
+                   "ACTA2", "PDGFRB", "COL1A1", "CD163", "MRC1", "ITGAM", "CD14",
+                   "CD279", "PDCD1", "TREM2", "TMEM119", "P2RY12", "CX3CR1")
+
+create_dotplot_heatmap(seurat_object = integrated_data,
+                       plot_features = plot_features,
+                       group_var = "cluster",
+                       group_colors = carspp1_cluster_col,
+                       column_title = "",
+                       row_km = 5,
+                       col_km = 5,
+                       row.order = NULL,
+                       col.order = NULL)
+
+```
+
+### Adding annotations
+
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
+
+integrated_data$annot <- mapvalues(x = integrated_data$integratedSCTsnn_res.0.3,
+                                   from = cluster_annot$integratedSCTsnn_res.0.3,
+                                   to = cluster_annot$annot)
+
+DimPlot(integrated_data,
+        group.by = "annot",
+        cols = carspp1_celltype_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+```
+
+### Cell type proportions
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+
+create_barplot(integrated_data,
+               group_var = "orig.ident",
+               plot_var = "annot",
+               plot_levels = levels(integrated_data$annot),
+               group_levels = sort(unique(integrated_data$orig.ident)),
+               plot_colors = carspp1_celltype_col,
+               var_names =  c("Frequency", "Sample"),
+               legend_title = "Sample")
+
+```
+
+Using scProportionTest. The first group (for example, CAR in "CAR vs. CTRL") gets positive values.
+
+```{r, message = F, warning = F, fig.width = 3, fig.height = 4, results = 'hide'}
+
+prop_test <- sc_utils(integrated_data)
+
+# Permutation testing and bootstrapping
+
+# CAR vs. CTRL
+prop_test <- permutation_test(
+  prop_test, cluster_identity = "annot",
+  sample_2 = "CAR", sample_1 = "TUMOR",
+  sample_identity = "orig.ident")
+
+perm_plot <- permutation_plot(prop_test)
+
+perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + ggtitle("CAR vs. CTRL")
+
+# SPP1 vs. CTRL
+prop_test <- permutation_test(
+  prop_test, cluster_identity = "annot",
+  sample_2 = "SPP1", sample_1 = "TUMOR",
+  sample_identity = "orig.ident")
+
+perm_plot <- permutation_plot(prop_test)
+
+perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + ggtitle("SPP1 vs. CTRL")
+
+# CAR+SPP1 vs. CTRL
+prop_test <- permutation_test(
+  prop_test, cluster_identity = "annot",
+  sample_2 = "SPP1+CAR", sample_1 = "TUMOR",
+  sample_identity = "orig.ident")
+
+perm_plot <- permutation_plot(prop_test)
+
+perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + ggtitle("SPP1+CAR vs. CTRL")
+
+# CAR+SPP1 vs. CAR
+prop_test <- permutation_test(
+  prop_test, cluster_identity = "annot",
+  sample_2 = "SPP1+CAR", sample_1 = "CAR",
+  sample_identity = "orig.ident")
+
+perm_plot <- permutation_plot(prop_test)
+
+perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + ggtitle("SPP1+CAR vs. CAR")
+
+# CAR+SPP1 vs. SPP1
+prop_test <- permutation_test(
+  prop_test, cluster_identity = "annot",
+  sample_2 = "SPP1+CAR", sample_1 = "SPP1",
+  sample_identity = "orig.ident")
+
+perm_plot <- permutation_plot(prop_test)
+
+perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + ggtitle("SPP1+CAR vs. SPP1")
+
+
+```
