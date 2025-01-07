@@ -231,7 +231,7 @@ DimPlot(integrated_data,
 
 ```
 
-```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide', eval = F}
 
 DimPlot(integrated_data,
         group.by = "cluster",
@@ -320,14 +320,16 @@ integrated_data <- NormalizeData(integrated_data)
 
 ```
 
-```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 8, fig.height = 10, results = 'hide'}
 
 FeaturePlot(integrated_data,
             #layer = "RNA",
             slot = "data",
-            features = c("PTPRC", "CD3E", "CD4", "CD8A", "CD19", "ITGAM", "CD36", "CD14", "SPP1"),
+            features = c("PTPRC", "CD3E", "CD4", "CD8A", "CD19", "ITGAM",
+                         "CD36", "CD14", "SPP1", "C1QA", "C1QB", "C1QC",
+                         "APOE"),
             order = T,
-            ncol = 3,
+            ncol = 4,
             reduction = reduction,
             raster = T,
             cols = c("gray89", "tomato3")) &
