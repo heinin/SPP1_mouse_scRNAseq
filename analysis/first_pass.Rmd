@@ -444,14 +444,14 @@ create_barplot(integrated_data,
                plot_levels = levels(integrated_data$annot),
                group_levels = sort(unique(integrated_data$orig.ident)),
                plot_colors = carspp1_celltype_col,
-               var_names =  c("Frequency", "Sample"),
-               legend_title = "Sample")
+               var_names =  c("Frequency", ""),
+               legend_title = "")
 
 ```
 
 Using scProportionTest. The first group (for example, CAR in "CAR vs. CTRL") gets positive values.
 
-```{r, message = F, warning = F, fig.width = 3, fig.height = 4, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
 
 prop_test <- sc_utils(integrated_data)
 

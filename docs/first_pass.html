@@ -433,10 +433,10 @@ changes </a>
 <div id="strongRMarkdownfilestronguncommittedchanges"
 class="panel-collapse collapse">
 <div class="panel-body">
-<p>The R Markdown is untracked by Git. To know which version of the R
-Markdown file created these results, you’ll want to first commit it to
-the Git repo. If you’re still working on the analysis, you can ignore
-this warning. When you’re finished, you can run
+<p>The R Markdown file has unstaged changes. To know which version of
+the R Markdown file created these results, you’ll want to first commit
+it to the Git repo. If you’re still working on the analysis, you can
+ignore this warning. When you’re finished, you can run
 <code>wflow_publish</code> to commit the R Markdown file and build the
 HTML.</p>
 </div>
@@ -571,13 +571,15 @@ code/colors_themes.R
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongf32fff2">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtreea3864c67f5dccce45959ab7894223a370d619123targetblanka3864c6a">
 <span class="glyphicon glyphicon-ok text-success"
-aria-hidden="true"></span> <strong>Repository version:</strong> f32fff2
+aria-hidden="true"></span> <strong>Repository version:</strong>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/a3864c67f5dccce45959ab7894223a370d619123" target="_blank">a3864c6</a>
 </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongf32fff2"
+<div
+id="strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtreea3864c67f5dccce45959ab7894223a370d619123targetblanka3864c6a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -586,7 +588,8 @@ and connecting the code version to the results is critical for
 reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version f32fff2.
+The results in this page were generated with repository version
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/a3864c67f5dccce45959ab7894223a370d619123" target="_blank">a3864c6</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -600,11 +603,11 @@ depends on. Below is the status of the Git repository when the results
 were generated:
 </p>
 <pre><code>
-Untracked files:
-    Untracked:  Rplots.pdf
-    Untracked:  analysis/first_pass.Rmd
-    Untracked:  code/CART_plot_functions.R
-    Untracked:  code/colors_themes.R
+Ignored files:
+    Ignored:    analysis/figure/
+
+Unstaged changes:
+    Modified:   analysis/first_pass.Rmd
 
 </code></pre>
 <p>
@@ -619,10 +622,74 @@ have uncommitted changes.
 <hr>
 </div>
 <div id="versions" class="tab-pane fade">
+
 <p>
-There are no past versions. Publish this analysis with
-<code>wflow_publish()</code> to start tracking its development.
+These are the previous versions of the repository in which changes were
+made to the R Markdown (<code>analysis/first_pass.Rmd</code>) and HTML
+(<code>docs/first_pass.html</code>) files. If you’ve configured a remote
+Git repository (see <code>?wflow_git_remote</code>), click on the
+hyperlinks in the table below to view the files as they were in that
+past version.
 </p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/analysis/first_pass.Rmd" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+<td>
+First pass analysis
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/heinin/SPP1_mouse_scRNAseq/a3864c67f5dccce45959ab7894223a370d619123/docs/first_pass.html" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+<td>
+First pass analysis
+</td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr>
 </div>
 </div>
@@ -667,11 +734,85 @@ unique(seurat_data$orig.ident)
 
 DimPlot(seurat_data, reduction = &quot;integrated.cca&quot;)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-3-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-3-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="qc" class="section level4">
 <h4>QC</h4>
 <pre class="r"><code>VlnPlot(seurat_data, features = c(&quot;nCount_RNA&quot;, &quot;nFeature_RNA&quot;, &quot;percent.mt&quot;),
         pt.size = 0)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-4-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>par(mfrow=c(2,3))
 
 # PLOTS 1 &amp; 2: nCount vs. nFeature
@@ -699,6 +840,43 @@ smoothScatter(seurat_data$percent.mt, seurat_data$nFeature_RNA,
 abline(v = 10, h = 500, 
        lty = &quot;dashed&quot;, lwd = 1.25, col = &quot;red&quot;)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-5-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-5-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="clustering-and-umap-construction" class="section level3">
@@ -785,6 +963,43 @@ DimPlot(integrated_data,
   NoAxes() +
   coord_fixed(1)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-7-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-7-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>DimPlot(integrated_data,
         group.by = &quot;orig.ident&quot;,
         #cols = jak1_celltype_col,
@@ -802,6 +1017,43 @@ DimPlot(integrated_data,
   NoAxes() +
   coord_fixed(1)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-7-2.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-7-2.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>DimPlot(integrated_data,
         group.by = &quot;Phase&quot;,
         #cols = jak1_celltype_col,
@@ -819,6 +1071,43 @@ DimPlot(integrated_data,
   NoAxes() +
   coord_fixed(1)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-7-3.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-3">
+Past versions of unnamed-chunk-7-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-7-3.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>DimPlot(integrated_data,
         group.by = &quot;cluster&quot;,
         split.by = &quot;orig.ident&quot;,
@@ -838,6 +1127,43 @@ DimPlot(integrated_data,
   NoAxes() +
   coord_fixed(1)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-8-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-8-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="marker-expression-and-cell-type-annotation"
 class="section level3">
@@ -914,6 +1240,43 @@ integrated_data &lt;- NormalizeData(integrated_data)
   theme_bw() &amp;
   NoLegend()</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-10-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>FeaturePlot(integrated_data,
             #layer = &quot;RNA&quot;,
             slot = &quot;data&quot;,
@@ -927,6 +1290,43 @@ integrated_data &lt;- NormalizeData(integrated_data)
   theme_bw() &amp;
   NoLegend()</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-11-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="top-markers-and-cell-type-annotations" class="section level3">
 <h3>Top markers and cell type annotations</h3>
@@ -952,7 +1352,82 @@ create_dotplot_heatmap(seurat_object = integrated_data,
                        col_km = 5,
                        row.order = NULL,
                        col.order = NULL)</code></pre>
-<p><img src="figure/first_pass.Rmd/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /><img src="figure/first_pass.Rmd/unnamed-chunk-12-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-12-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
+Past versions of unnamed-chunk-12-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-12-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-12-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-2">
+Past versions of unnamed-chunk-12-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-12-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-12-2.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="tme-markers" class="section level3">
 <h3>TME markers</h3>
@@ -974,7 +1449,82 @@ create_dotplot_heatmap(seurat_object = integrated_data,
                        col_km = 5,
                        row.order = NULL,
                        col.order = NULL)</code></pre>
-<p><img src="figure/first_pass.Rmd/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" /><img src="figure/first_pass.Rmd/unnamed-chunk-13-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-13-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-13-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-13-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-2">
+Past versions of unnamed-chunk-13-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-13-2.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="adding-annotations" class="section level3">
 <h3>Adding annotations</h3>
@@ -999,6 +1549,43 @@ DimPlot(integrated_data,
   NoAxes() +
   coord_fixed(1)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-14-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-14-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="cell-type-proportions" class="section level3">
 <h3>Cell type proportions</h3>
@@ -1008,10 +1595,48 @@ DimPlot(integrated_data,
                plot_levels = levels(integrated_data$annot),
                group_levels = sort(unique(integrated_data$orig.ident)),
                plot_colors = carspp1_celltype_col,
-               var_names =  c(&quot;Frequency&quot;, &quot;Sample&quot;),
-               legend_title = &quot;Sample&quot;)</code></pre>
+               var_names =  c(&quot;Frequency&quot;, &quot;&quot;),
+               legend_title = &quot;&quot;)</code></pre>
 <p><img src="figure/first_pass.Rmd/unnamed-chunk-15-1.png" width="480" style="display: block; margin: auto;" /></p>
-<p>Using scProportionTest</p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-1">
+Past versions of unnamed-chunk-15-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-15-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Using scProportionTest. The first group (for example, CAR in “CAR
+vs. CTRL”) gets positive values.</p>
 <pre class="r"><code>prop_test &lt;- sc_utils(integrated_data)
 
 # Permutation testing and bootstrapping
@@ -1025,7 +1650,44 @@ prop_test &lt;- permutation_test(
 perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;CAR vs. CTRL&quot;)</code></pre>
-<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-1.png" width="288" style="display: block; margin: auto;" /></p>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-16-1.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># SPP1 vs. CTRL
 prop_test &lt;- permutation_test(
   prop_test, cluster_identity = &quot;annot&quot;,
@@ -1035,7 +1697,44 @@ prop_test &lt;- permutation_test(
 perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1 vs. CTRL&quot;)</code></pre>
-<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-2.png" width="288" style="display: block; margin: auto;" /></p>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-2.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-2">
+Past versions of unnamed-chunk-16-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-16-2.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># CAR+SPP1 vs. CTRL
 prop_test &lt;- permutation_test(
   prop_test, cluster_identity = &quot;annot&quot;,
@@ -1045,7 +1744,44 @@ prop_test &lt;- permutation_test(
 perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1+CAR vs. CTRL&quot;)</code></pre>
-<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-3.png" width="288" style="display: block; margin: auto;" /></p>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-3.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-3">
+Past versions of unnamed-chunk-16-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-16-3.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># CAR+SPP1 vs. CAR
 prop_test &lt;- permutation_test(
   prop_test, cluster_identity = &quot;annot&quot;,
@@ -1055,7 +1791,44 @@ prop_test &lt;- permutation_test(
 perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1+CAR vs. CAR&quot;)</code></pre>
-<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-4.png" width="288" style="display: block; margin: auto;" /></p>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-4.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-4">
+Past versions of unnamed-chunk-16-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-16-4.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># CAR+SPP1 vs. SPP1
 prop_test &lt;- permutation_test(
   prop_test, cluster_identity = &quot;annot&quot;,
@@ -1065,7 +1838,44 @@ prop_test &lt;- permutation_test(
 perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1+CAR vs. SPP1&quot;)</code></pre>
-<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-5.png" width="288" style="display: block; margin: auto;" /></p>
+<p><img src="figure/first_pass.Rmd/unnamed-chunk-16-5.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-5">
+Past versions of unnamed-chunk-16-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/a3864c67f5dccce45959ab7894223a370d619123/docs/figure/first_pass.Rmd/unnamed-chunk-16-5.png" target="_blank">a3864c6</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-01-07
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
