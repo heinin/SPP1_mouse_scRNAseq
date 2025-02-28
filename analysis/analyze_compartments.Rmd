@@ -1,0 +1,482 @@
+---
+title: "Analyzing cell compartments in CAR+SPP1ab treated tumors"
+author: "heinin"
+date: "2025-01-07"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+  html_notebook: default
+editor_options:
+  chunk_output_type: console
+---
+
+### Libraries and environment variables
+
+```{r, message = F, warning = F, results = 'hide'}
+
+library(workflowr)
+library(Seurat)
+library(googlesheets4)
+library(tidyverse)
+library(plyr)
+library(ggrepel)
+library(patchwork)
+
+setwd("/home/hnatri/SPP1_mouse_scRNAseq/")
+set.seed(1234)
+options(future.globals.maxSize = 30000 * 1024^2)
+reduction <- "umap"
+
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/CART_plot_functions.R")
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
+source("/home/hnatri/SingleCellBestPractices/scripts/preprocessing_qc_module.R")
+source("/home/hnatri/SingleCellBestPractices/scripts/integration_module.R")
+
+# Cluster annotations
+gs4_deauth()
+annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
+cluster_annot <- read_sheet(annot, sheet = "Cluster annotation")
+myeloid_annot <- read_sheet(annot, sheet = "Myeloid annotation")
+lymphoid_annot <- read_sheet(annot, sheet = "Lymphoid annotation")
+
+```
+
+### Helper functions
+
+```{r, message = F, warning = F, results = 'hide'}
+
+recluster_seurat <- function(seurat_object, vars_to_regress){
+  
+  DefaultAssay(seurat_object) <- "RNA"
+  seurat_object <- SCTransform(seurat_object, vars.to.regress = vars_to_regress)
+  seurat_object <- RunPCA(seurat_object,
+                          reduction.name = "pca",
+                          verbose = F)
+  pcs <- get_pcs(seurat_object, reduction_name = "pca")
+  message(pcs)
+  seurat_object <- RunUMAP(seurat_object,
+                           reduction = "pca",
+                           reduction.name = "umap",
+                           dims = 1:min(pcs),
+                           return.model = TRUE)
+  seurat_object <- FindNeighbors(seurat_object,
+                                 reduction = "pca",
+                                 dims = 1:min(pcs),
+                                 graph.name = c("nn",
+                                                "snn"))
+  seurat_object <- FindClusters(seurat_object,
+                                resolution = c(0.1,0.2,0.3,0.5,0.8,1),
+                                graph.name = "snn")
+  
+  return(seurat_object)
+
+}
+
+```
+
+### Import data
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 5, fig.height = 5}
+
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+unique(seurat_data$orig.ident)
+unique(seurat_data$annot)
+
+```
+
+### Myeloid fraction
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 5, fig.height = 5, eval = F}
+
+vars_to_regress <- c("G2M.Score",
+                     "S.Score",
+                     "nCount_RNA",
+                     "nFeature_RNA",
+                     "percent.mt")
+
+myel_cells <- grep("^M", unique(seurat_data$annot), value = T)
+
+myeloid <- subset(seurat_data, subset = annot %in% myel_cells)
+myeloid <- recluster_seurat(myeloid, vars_to_regress)
+
+#saveRDS(myeloid, "/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_myeloid.rds")
+
+```
+
+### Feature expression and cell type annotations
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
+
+myeloid <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_myeloid.rds")
+
+DimPlot(myeloid,
+        group.by = "annot",
+        cols = myeloid_colors,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+DimPlot(myeloid,
+        group.by = "snn_res.0.3",
+        cols = myeloid_cluster_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+```
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 8, fig.height = 8}
+
+markers <- presto::wilcoxauc(myeloid,
+                             group_by = "snn_res.0.3",
+                             assay = "data",
+                             seurat_assay = "RNA_human")
+
+plot_features <- markers %>%  group_by(group) %>% slice_max(order_by = auc, n = 5)
+
+DefaultAssay(myeloid) <- "RNA_human"
+create_dotplot_heatmap(seurat_object = myeloid,
+                       plot_features = unique(plot_features$feature),
+                       group_var = "snn_res.0.3",
+                       group_colors = myeloid_cluster_col,
+                       column_title = "",
+                       row_km = 5,
+                       col_km = 5,
+                       row.order = NULL,
+                       col.order = NULL)
+
+```
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 8, fig.height = 8}
+
+plot_features <- c("PTMA", "PFN1", "CFL1", "TMSB4X", "TPT1", "TMSB10", "MIF",
+                   "PDPN", "NLRP3", "IL1B", "CCL4", "S100A8", "S100A9",
+                   "S100A10", "TYROBP", "CD68", "ICAM1", "C1QA", "C1QB", "C1QC",
+                   "CD74", "AREG", "CD4", "APOE", "FABP5", "SPP1", "CD274",
+                   "CD96", "PTPRC", "CEMIP2", "KLRD1", "CD8A", "NKG7", "IL32",
+                   "CD3D", "BTG1", "IFITM2", "ITM2A", "SELL", "GZMB", "CD79A",
+                   "ACTA2", "PDGFRB", "COL1A1", "CD163", "MRC1", "ITGAM", "CD14",
+                   "CD279", "PDCD1", "TREM2", "TMEM119", "P2RY12", "CX3CR1")
+
+create_dotplot_heatmap(seurat_object = myeloid,
+                       plot_features = plot_features,
+                       group_var = "snn_res.0.3",
+                       group_colors = myeloid_cluster_col,
+                       column_title = "",
+                       row_km = 5,
+                       col_km = 5,
+                       row.order = NULL,
+                       col.order = NULL)
+
+```
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 16, fig.height = 24}
+
+FeaturePlot(myeloid,
+            #layer = "RNA",
+            slot = "data",
+            features = plot_features,
+            order = T,
+            ncol = 5,
+            reduction = reduction,
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
+### Saving top markers
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 6, eval = F}
+
+output_cluster_markers <- markers %>%
+  arrange(dplyr::desc(logFC)) %>%
+  group_by(group) %>%
+  dplyr::slice(1:30)
+
+write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/myeloid_cluster_markers.tsv",
+            quote = F, row.names = F, sep = "\t")
+
+```
+
+### Adding annotations
+
+```{r, warning = F, fig.width = 4, fig.height = 4}
+
+myeloid$myeloid_annot <- mapvalues(x = myeloid$snn_res.0.3,
+                                   from = myeloid_annot$snn_res.0.3,
+                                   to = myeloid_annot$annot)
+
+DimPlot(myeloid,
+        group.by = "myeloid_annot",
+        #cols = carspp1_celltype_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+seurat_data$myeloid_annot <- mapvalues(x = rownames(seurat_data@meta.data),
+                                       from = rownames(myeloid@meta.data),
+                                       to = as.character(myeloid$annot))
+seurat_data@meta.data$myeloid_annot[-which(rownames(seurat_data@meta.data) %in% rownames(myeloid@meta.data))] <- NA
+
+seurat_data$annot_granular <- ifelse(!is.na(seurat_data$myeloid_annot),
+                                     seurat_data$myeloid_annot,
+                                     seurat_data$annot)
+
+unique(seurat_data$annot_granular)
+
+#DimPlot(seurat_data,
+#        group.by = "annot_granular",
+#        #cols = carspp1_celltype_col,
+#        reduction = "integratedSCTumap",
+#        label = T,
+#        label.box = T,
+#        label.size = 3,
+#        repel = T,
+#        raster = T,
+#        raster.dpi = c(1024, 1024),
+#        pt.size = 3) +
+#  ggtitle("") +
+#  theme_classic() +
+#  NoLegend() +
+#  NoAxes() +
+#  coord_fixed(1)
+
+#saveRDS(myeloid, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_myeloid.rds")
+
+```
+
+### Lymphoid fraction
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 5, fig.height = 5, eval = F}
+
+vars_to_regress <- c("G2M.Score",
+                     "S.Score",
+                     "nCount_RNA",
+                     "nFeature_RNA",
+                     "percent.mt")
+
+lymph_cells <- grep("^L", unique(seurat_data$annot), value = T)
+
+lymphoid <- subset(seurat_data, subset = annot %in% lymph_cells)
+lymphoid <- recluster_seurat(lymphoid, vars_to_regress)
+
+#saveRDS(lymphoid, "/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_lymphoid.rds")
+
+```
+
+### Feature expression and cell type annotations
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
+
+lymphoid <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_lymphoid.rds")
+
+#DimPlot(lymphoid,
+#        group.by = "annot",
+#        cols = lymphoid_cluster_col,
+#        reduction = reduction,
+#        label = T,
+#        label.box = T,
+#        label.size = 3,
+#        repel = T,
+#        raster = T,
+#        raster.dpi = c(1024, 1024),
+#        pt.size = 3) +
+#  ggtitle("") +
+#  theme_classic() +
+#  NoLegend() +
+#  NoAxes() +
+#  coord_fixed(1)
+
+DimPlot(lymphoid,
+        group.by = "snn_res.0.3",
+        cols = lymphoid_cluster_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+```
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 8, fig.height = 8}
+
+markers <- presto::wilcoxauc(lymphoid,
+                             group_by = "snn_res.0.3",
+                             assay = "data",
+                             seurat_assay = "RNA_human")
+
+plot_features <- markers %>% group_by(group) %>% slice_max(order_by = auc, n = 5)
+
+DefaultAssay(lymphoid) <- "RNA_human"
+create_dotplot_heatmap(seurat_object = lymphoid,
+                       plot_features = unique(plot_features$feature),
+                       group_var = "snn_res.0.3",
+                       group_colors = lymphoid_cluster_col,
+                       column_title = "",
+                       row_km = 5,
+                       col_km = 5,
+                       row.order = NULL,
+                       col.order = NULL)
+
+```
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 8, fig.height = 8}
+
+plot_features <- c("PTMA", "PFN1", "CFL1", "TMSB4X", "TPT1", "TMSB10", "MIF",
+                   "PDPN", "NLRP3", "IL1B", "CCL4", "S100A8", "S100A9",
+                   "S100A10", "TYROBP", "CD68", "ICAM1", "C1QA", "C1QB", "C1QC",
+                   "CD74", "AREG", "CD4", "APOE", "FABP5", "SPP1", "CD274",
+                   "CD96", "PTPRC", "CEMIP2", "KLRD1", "CD8A", "NKG7", "IL32",
+                   "CD3D", "BTG1", "IFITM2", "ITM2A", "SELL", "GZMB", "CD79A",
+                   "ACTA2", "PDGFRB", "COL1A1", "CD163", "MRC1", "ITGAM", "CD14",
+                   "CD279", "PDCD1", "TREM2", "TMEM119", "P2RY12", "CX3CR1")
+
+create_dotplot_heatmap(seurat_object = lymphoid,
+                       plot_features = plot_features,
+                       group_var = "snn_res.0.3",
+                       group_colors = lymphoid_cluster_col,
+                       column_title = "",
+                       row_km = 5,
+                       col_km = 5,
+                       row.order = NULL,
+                       col.order = NULL)
+
+```
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 16, fig.height = 24}
+
+FeaturePlot(lymphoid,
+            #layer = "RNA",
+            slot = "data",
+            features = plot_features,
+            order = T,
+            ncol = 5,
+            reduction = reduction,
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
+### Saving top markers
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 6, eval = F}
+
+output_cluster_markers <- markers %>%
+  arrange(dplyr::desc(logFC)) %>%
+  group_by(group) %>%
+  dplyr::slice(1:30)
+
+write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/lymphoid_cluster_markers.tsv",
+            quote = F, row.names = F, sep = "\t")
+
+```
+
+### Adding annotations
+
+```{r, warning = F, fig.width = 4, fig.height = 4}
+
+lymphoid$lymphoid_annot <- mapvalues(x = lymphoid$snn_res.0.3,
+                                   from = lymphoid_annot$snn_res.0.3,
+                                   to = lymphoid_annot$annot)
+
+DimPlot(lymphoid,
+        group.by = "lymphoid_annot",
+        #cols = carspp1_celltype_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+unique(lymphoid$annot)
+
+seurat_data$lymphoid_annot <- mapvalues(x = rownames(seurat_data@meta.data),
+                                       from = rownames(lymphoid@meta.data),
+                                       to = as.character(lymphoid$annot))
+seurat_data@meta.data$lymphoid_annot[-which(rownames(seurat_data@meta.data) %in% rownames(lymphoid@meta.data))] <- NA
+
+unique(seurat_data$lymphoid_annot)
+
+seurat_data$annot_granular <- ifelse(!is.na(seurat_data$lymphoid_annot),
+                                     as.character(seurat_data$lymphoid_annot),
+                                     as.character(seurat_data$annot))
+
+unique(seurat_data$annot_granular)
+
+#DimPlot(seurat_data,
+#        #group.by = "annot_granular",
+#        #cols = carspp1_celltype_col,
+#        reduction = "integratedSCTumap",
+#        label = T,
+#        label.box = T,
+#        label.size = 3,
+#        repel = T,
+#        raster = T,
+#        raster.dpi = c(1024, 1024),
+#        pt.size = 3) +
+#  ggtitle("") +
+#  theme_classic() +
+#  NoLegend() +
+#  NoAxes() +
+#  coord_fixed(1)
+
+#saveRDS(lymphoid, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_lymphoid.rds")
+saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+
+# To build on command line, run Rscript -e "rmarkdown::render('/home/hnatri/SPP1_mouse_scRNAseq/analysis/analyze_compartments.Rmd')"
+# Then "mv *.html /home/hnatri/SPP1_mouse_scRNAseq/docs/"
+
+```
+

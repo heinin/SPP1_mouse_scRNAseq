@@ -57,7 +57,7 @@ Core ran CCA integration
 
 ```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
 
-seurat_data <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/ROUND1/Seurat.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/ROUND1/Seurat.rds")
 unique(seurat_data$orig.ident)
 
 DimPlot(seurat_data, reduction = "integrated.cca")
@@ -122,7 +122,8 @@ s.genes <- cc.genes$s.genes
 g2m.genes <- cc.genes$g2m.genes
 
 # Converting human gene names to mouse
-mouse_human_genes <- read.csv("http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt",sep="\t")
+mouse_human_genes <- read.table("http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt",
+                                sep="\t", header = T)
 
 mouse <- split.data.frame(mouse_human_genes,mouse_human_genes$Common.Organism.Name)[[2]]
 human <- split.data.frame(mouse_human_genes,mouse_human_genes$Common.Organism.Name)[[1]]
@@ -174,7 +175,7 @@ integrated_data <- sct_rpca_integration(seurat_list,
 
 ```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
 
-integrated_data <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+integrated_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
 integrated_data$cluster <- integrated_data$integratedSCTsnn_res.0.3
 table(integrated_data$cluster)
 
@@ -316,7 +317,7 @@ integrated_data[["RNA_human"]] <- CreateAssayObject(assay_data,
 DefaultAssay(integrated_data) <- "RNA_human"
 integrated_data <- NormalizeData(integrated_data)
 
-#saveRDS(integrated_data, "/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+#saveRDS(integrated_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
 
 ```
 
@@ -433,6 +434,8 @@ DimPlot(integrated_data,
   NoLegend() +
   NoAxes() +
   coord_fixed(1)
+
+#saveRDS(integrated_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
 
 ```
 

@@ -11,6 +11,12 @@ library(circlize)
 library(googlesheets4)
 
 #==============================================================================
+# Environment variables
+#==============================================================================
+
+set.seed(1234)
+
+#==============================================================================
 # Colors and themes
 #==============================================================================
 
@@ -32,6 +38,23 @@ cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
 carspp1_celltypes <- cluster_annot$annot
 carspp1_celltype_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(carspp1_celltypes))
 names(carspp1_celltype_col) <- carspp1_celltypes
+
+myeloid_clusters <- as.factor(c(0, seq(1:16)))
+myeloid_cluster_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(myeloid_clusters))
+names(myeloid_cluster_col) <- myeloid_clusters
+
+myeloid_celltypes <- c("M1_suppressive", "M6", "M9", "M2_suppressive", "M4",
+                       "M5_suppressive", "M7", "M3_suppressive",
+                       "M8_suppressive_G2MS", "M10", "M11")
+#myeloid_colors <- tinter("aquamarine3", steps = 8, crop = 3,
+#                         direction = "both", adjust = 0)
+myeloid_colors <- colorRampPalette(c("aquamarine1", "darkgreen"))(nb.cols <- length(myeloid_celltypes))
+names(myeloid_colors) <- myeloid_celltypes
+#myeloid_colors <- myeloid_colors[myeloid_celltypes]
+
+lymphoid_clusters <- as.factor(c(0, seq(1:10)))
+lymphoid_cluster_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(lymphoid_clusters))
+names(lymphoid_cluster_col) <- lymphoid_clusters
 
 # Sample type
 #sample_type_col <- c("Mock" = "azure3",
