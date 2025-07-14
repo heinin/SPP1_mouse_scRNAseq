@@ -73,7 +73,7 @@ VlnPlot(seurat_data, features = c("nCount_RNA", "nFeature_RNA", "percent.mt"),
 
 ```
 
-```{r, message = F, warning = F, fig.width = 9, fig.height = 6, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 9, fig.height = 6, results = 'hide', eval = F}
 
 par(mfrow=c(2,3))
 
@@ -328,9 +328,9 @@ FeaturePlot(integrated_data,
             slot = "data",
             features = c("PTPRC", "CD3E", "CD4", "CD8A", "CD19", "ITGAM",
                          "CD36", "CD14", "SPP1", "C1QA", "C1QB", "C1QC",
-                         "APOE"),
+                         "APOE", "SPP1"),
             order = T,
-            ncol = 4,
+            ncol = 5,
             reduction = reduction,
             raster = T,
             cols = c("gray89", "tomato3")) &
@@ -357,6 +357,41 @@ FeaturePlot(integrated_data,
 
 ```
 
+### Using sc-ImmuCC to annotate immune cells
+
+```{r, results='hide', warning=F, message=F, eval = F}
+
+count_data <- LayerData(seurat_data, assay = "RNA_human", layer = "counts")
+
+scImmuCC_Layered(count = count_data, Non_Immune = FALSE)
+
+# Importing results
+scicc_labels <- read.csv("/home/hnatri/PD1_mm/docs/Layer1_scImmuCC_label.csv",
+                         row.names = "X")
+
+length(colnames(seurat_data))
+length(intersect(scicc_labels$barcodes, colnames(seurat_data)))
+
+seurat_data$scImmuCC_celltype <- mapvalues(x = colnames(seurat_data),
+                                           from = scicc_labels$barcodes,
+                                           to = scicc_labels$cell_type)
+
+# Plotting
+DimPlot(seurat_data,
+        group.by = "scImmuCC_celltype",
+        reduction = "umap",
+        raster = T,
+        #cols = scImmuCC_celltype_col,
+        label = T) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend() &
+  manuscript_theme
+
+#saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/PD1_mm_Seurat/PD1_mm_Seurat_merged.Rds")
+
+```
+
 ### Top markers and cell type annotations
 
 ```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide'}
@@ -371,6 +406,12 @@ markers <- presto::wilcoxauc(integrated_data,
 
 #markers <- markers[-which(markers$feature %in% grep("MT-", markers$feature, value = T)),]
 #markers <- markers[-which(markers$feature %in% grep("^RP", markers$feature, value = T)),]
+
+markers_sig <- markers %>%
+  filter(padj < 0.01,
+         abs(logFC) > 1)
+
+write.table(markers_sig, "/home/hnatri/SPP1_mouse_scRNAseq/cluster_sig_top_markers.tsv", quote = F, row.names = F, sep = "\t")
 
 plot_features <- markers %>%  group_by(group) %>% slice_max(order_by = auc, n = 5)
 
@@ -396,7 +437,8 @@ plot_features <- c("PTMA", "PFN1", "CFL1", "TMSB4X", "TPT1", "TMSB10", "MIF",
                    "CD96", "PTPRC", "CEMIP2", "KLRD1", "CD8A", "NKG7", "IL32",
                    "CD3D", "BTG1", "IFITM2", "ITM2A", "SELL", "GZMB", "CD79A",
                    "ACTA2", "PDGFRB", "COL1A1", "CD163", "MRC1", "ITGAM", "CD14",
-                   "CD279", "PDCD1", "TREM2", "TMEM119", "P2RY12", "CX3CR1")
+                   "CD279", "PDCD1", "TREM2", "TMEM119", "P2RY12", "CX3CR1",
+                   "CD19")
 
 create_dotplot_heatmap(seurat_object = integrated_data,
                        plot_features = plot_features,
@@ -410,12 +452,54 @@ create_dotplot_heatmap(seurat_object = integrated_data,
 
 ```
 
+```{r, message = F, warning = F, fig.width = 8, fig.height = 16, results = 'hide'}
+
+FeaturePlot(integrated_data,
+            #layer = "RNA",
+            slot = "data",
+            features = plot_features,
+            order = T,
+            ncol = 5,
+            reduction = reduction,
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
 ### Adding annotations
 
-```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide', eval = F}
 
-integrated_data$annot <- mapvalues(x = integrated_data$integratedSCTsnn_res.0.3,
-                                   from = cluster_annot$integratedSCTsnn_res.0.3,
+Idents(integrated_data) <- integrated_data$integratedSCTsnn_res.0.3
+integrated_data <- FindSubCluster(integrated_data,
+                                  cluster = 8,
+                                  graph.name = "integratedSCTsnn",
+                                  subcluster.name = "sub.cluster",
+                                  resolution = 0.1,
+                                  algorithm = 1)
+
+DimPlot(integrated_data,
+        group.by = "sub.cluster",
+        #cols = carspp1_celltype_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
+
+integrated_data$annot <- mapvalues(x = integrated_data$sub.cluster,
+                                   from = cluster_annot$sub.cluster,
                                    to = cluster_annot$annot)
 
 DimPlot(integrated_data,
@@ -441,7 +525,7 @@ DimPlot(integrated_data,
 
 ### Cell type proportions
 
-```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = F}
 
 create_barplot(integrated_data,
                group_var = "orig.ident",
@@ -456,7 +540,7 @@ create_barplot(integrated_data,
 
 Using scProportionTest. The first group (for example, CAR in "CAR vs. CTRL") gets positive values.
 
-```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide', eval = F}
 
 prop_test <- sc_utils(integrated_data)
 
@@ -511,6 +595,5 @@ prop_test <- permutation_test(
 perm_plot <- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + ggtitle("SPP1+CAR vs. SPP1")
-
 
 ```

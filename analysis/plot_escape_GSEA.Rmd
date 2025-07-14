@@ -1,0 +1,144 @@
+---
+title: "Plotting GSEA results for the CAR/anti-SPP1 Kluc tumors"
+author: "heinin"
+date: "2025-04-14"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+  html_notebook: default
+editor_options:
+  chunk_output_type: console
+---
+
+## Libraries and environment variables
+
+```{r, message = F, warning = F, results = 'hide'}
+
+library(workflowr)
+library(Seurat)
+library(googlesheets4)
+library(tidyverse)
+library(plyr)
+library(ggrepel)
+library(patchwork)
+library(escape)
+
+setwd("/home/hnatri/SPP1_mouse_scRNAseq/")
+set.seed(1234)
+options(future.globals.maxSize = 30000 * 1024^2)
+reduction <- "umap"
+
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/CART_plot_functions.R")
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
+
+# Cluster annotations
+gs4_deauth()
+cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
+cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
+
+```
+
+## Import data
+
+```{r, message = F, warning = F, results = 'hide'}
+
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated_GSEA.rds")
+seurat_data_annot <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+
+head(seurat_data@meta.data)
+unique(seurat_data$annot)
+unique(seurat_data$annot_granular)
+
+# Updating annotations
+seurat_data_annot$annot <- mapvalues(x = seurat_data_annot$sub.cluster,
+                                     from = unlist(cluster_annot$sub.cluster),
+                                     to = cluster_annot$annot)
+
+seurat_data$annot <- mapvalues(x = colnames(seurat_data),
+                               from = colnames(seurat_data_annot),
+                               to = seurat_data_annot$annot)
+
+```
+
+## PCA
+
+```{r, message = F, warning = F, results = 'hide'}
+
+seurat_data[["escapeGSVA"]]["data"] <- as.matrix(seurat_data[["escapeGSVA"]]["data"])
+
+seurat_data <- performPCA(seurat_data, 
+                          assay = "escapeGSVA",
+                          n.dim = 1:10)
+
+pcaEnrichment(seurat_data,
+              dimRed = "escape.PCA",
+              x.axis = "PC1",
+              y.axis = "PC2")
+
+pcaEnrichment(seurat_data, 
+              dimRed = "escape.PCA",
+              x.axis = "PC1",
+              y.axis = "PC2",
+              add.percent.contribution = TRUE,
+              display.factors = TRUE,
+              number.of.factors = 10)
+
+```
+
+## Differentially activated pathways, all cell types
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
+
+seurat_data$Sample <- seurat_data$orig.ident
+seurat_data$Sample <- gsub("SPP1\\+CAR", "CAR_SPP1", seurat_data$Sample)
+seurat_data$Sample <- gsub("TUMOR", "CTRL", seurat_data$Sample)
+
+Idents(seurat_data) <- seurat_data$Sample
+
+gsea_res <- FindAllMarkers(seurat_data, 
+                           assay = "escapeGSVA_normalized", 
+                           min.pct = 0,
+                           logfc.threshold = 0)
+
+head(gsea_res)
+hist(gsea_res$avg_log2FC)
+
+res_sig <- gsea_res %>% filter(abs(avg_log2FC) > 0.5,
+                               p_val_adj < 0.05)
+
+table(res_sig$cluster)
+
+res_sig %>% filter(cluster == "CAR_SPP1") %>%
+  dplyr::select(gene) %>% unlist() %>% as.character()
+
+```
+
+## Differentially activated pathways, myeloid
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
+
+unique(seurat_data$annot_granular)
+myeloid <- subset(seurat_data, subset = annot_granular %in% c(grep("^M", unique(seurat_data$annot_granular), value = T), c("B1")))
+
+gsea_res <- FindAllMarkers(myeloid, 
+                           assay = "escapeGSVA_normalized", 
+                           min.pct = 0,
+                           logfc.threshold = 0)
+
+res_sig <- gsea_res %>% filter(abs(avg_log2FC) > 0.5,
+                               p_val_adj < 0.05)
+
+table(res_sig$cluster)
+
+res_sig %>% filter(cluster == "CAR_SPP1") %>%
+  dplyr::select(gene) %>% unlist() %>% as.character()
+
+```
+
+### Plotting
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
+
+
+```
+

@@ -1,0 +1,102 @@
+---
+title: "Lymphoid and myeloid markers in CAR and SPP1+ treated mice"
+author: "heinin"
+date: "2025-07-14"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+  html_notebook: default
+editor_options:
+  chunk_output_type: console
+---
+
+## Libraries and environment variables
+
+```{r, message = F, warning = F, results = 'hide'}
+
+library(workflowr)
+library(Seurat)
+library(googlesheets4)
+library(tidyverse)
+library(plyr)
+library(ggrepel)
+library(patchwork)
+library(scProportionTest)
+
+setwd("/home/hnatri/SPP1_mouse_scRNAseq/")
+set.seed(1234)
+options(future.globals.maxSize = 30000 * 1024^2)
+reduction <- "integratedSCTumap"
+
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/CART_plot_functions.R")
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
+
+# Cluster annotations
+gs4_deauth()
+cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
+cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
+
+```
+
+## Import data
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 6, fig.height = 6}
+
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+
+head(seurat_data@meta.data)
+unique(seurat_data$orig.ident)
+unique(seurat_data$annot)
+
+```
+
+## Human T cell canonical markers
+
+### Group by celltype and treatment
+
+```{r, message = F, warning = F, fig.height = 3, fig.width = 9}
+
+# Canonical T cell markers
+gs4_deauth()
+canonical_markers  <- gs4_get("https://docs.google.com/spreadsheets/d/186PIcU3Jb0Xm3IuZgENEChluykvwsK4JnHF8FbeJASA/edit?usp=sharing")
+sheet_names(canonical_markers)
+canonical_markers <- read_sheet(canonical_markers, sheet = "T cells, gene sets")
+canonical_markers <- unique(canonical_markers$RNA)
+canonical_markers <- intersect(canonical_markers, rownames(seurat_data))
+
+lapply(canonical_markers, function(xx){
+  VlnPlot(subset(seurat_data, subset = annot %in%
+                   c(unique(grep("^L", seurat_data$annot, value = T)),
+                     c("ILC", "NK", "Treg", "B1"))),
+          features = xx,
+          assay = "RNA_human",
+          slot = "data",
+          group.by = "annot",
+          split.by = "orig.ident",
+          pt.size = 0,
+          ncol = 1) &
+    theme_classic() &
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+})
+
+```
+
+### Plotting by treatment only
+
+```{r, message = F, warning = F, fig.height = 3, fig.width = 6}
+
+lapply(canonical_markers, function(xx){
+  VlnPlot(subset(seurat_data, subset = annot %in%
+                   c(unique(grep("^L", seurat_data$annot, value = T)),
+                     c("ILC", "NK", "Treg", "B1"))),
+          features = xx,
+          assay = "RNA_human",
+          slot = "data",
+          group.by = "orig.ident",
+          pt.size = 0,
+          ncol = 1) &
+    theme_classic() &
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+})
+
+```

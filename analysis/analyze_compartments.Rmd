@@ -69,7 +69,6 @@ recluster_seurat <- function(seurat_object, vars_to_regress){
                                 graph.name = "snn")
   
   return(seurat_object)
-
 }
 
 ```
@@ -252,8 +251,8 @@ seurat_data$myeloid_annot <- mapvalues(x = rownames(seurat_data@meta.data),
 seurat_data@meta.data$myeloid_annot[-which(rownames(seurat_data@meta.data) %in% rownames(myeloid@meta.data))] <- NA
 
 seurat_data$annot_granular <- ifelse(!is.na(seurat_data$myeloid_annot),
-                                     seurat_data$myeloid_annot,
-                                     seurat_data$annot)
+                                     as.character(seurat_data$myeloid_annot),
+                                     as.character(seurat_data$annot))
 
 unique(seurat_data$annot_granular)
 
@@ -420,8 +419,8 @@ write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/lymphoid_c
 ```{r, warning = F, fig.width = 4, fig.height = 4}
 
 lymphoid$lymphoid_annot <- mapvalues(x = lymphoid$snn_res.0.3,
-                                   from = lymphoid_annot$snn_res.0.3,
-                                   to = lymphoid_annot$annot)
+                                     from = lymphoid_annot$snn_res.0.3,
+                                     to = lymphoid_annot$annot)
 
 DimPlot(lymphoid,
         group.by = "lymphoid_annot",
@@ -443,15 +442,15 @@ DimPlot(lymphoid,
 unique(lymphoid$annot)
 
 seurat_data$lymphoid_annot <- mapvalues(x = rownames(seurat_data@meta.data),
-                                       from = rownames(lymphoid@meta.data),
-                                       to = as.character(lymphoid$annot))
+                                        from = rownames(lymphoid@meta.data),
+                                        to = as.character(lymphoid$lymphoid_annot))
 seurat_data@meta.data$lymphoid_annot[-which(rownames(seurat_data@meta.data) %in% rownames(lymphoid@meta.data))] <- NA
 
 unique(seurat_data$lymphoid_annot)
 
 seurat_data$annot_granular <- ifelse(!is.na(seurat_data$lymphoid_annot),
                                      as.character(seurat_data$lymphoid_annot),
-                                     as.character(seurat_data$annot))
+                                     as.character(seurat_data$annot_granular))
 
 unique(seurat_data$annot_granular)
 
@@ -473,7 +472,7 @@ unique(seurat_data$annot_granular)
 #  coord_fixed(1)
 
 #saveRDS(lymphoid, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_lymphoid.rds")
-saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+#saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
 
 # To build on command line, run Rscript -e "rmarkdown::render('/home/hnatri/SPP1_mouse_scRNAseq/analysis/analyze_compartments.Rmd')"
 # Then "mv *.html /home/hnatri/SPP1_mouse_scRNAseq/docs/"

@@ -14,5 +14,6 @@ Project directory in [Google Drive](https://drive.google.com/drive/folders/1tP_g
 
 1. [First-pass annotation](first_pass.html)\
 2. [Analyzing compartments](analyze_compartments.html)\
+3. [Comparative analysis](comparative_analysis.html)\
 
 Contact: Heini M Natri, hnatri@tgen.org
