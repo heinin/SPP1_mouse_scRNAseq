@@ -36,7 +36,6 @@ gs4_deauth()
 cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
 cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
 
-
 ```
 
 ## Import data
@@ -50,22 +49,22 @@ seurat_data$annot <- mapvalues(x = seurat_data$sub.cluster,
                                from = cluster_annot$sub.cluster,
                                to = cluster_annot$annot)
 
-DimPlot(seurat_data,
-        group.by = "annot",
-        cols = carspp1_celltype_col,
-        reduction = reduction,
-        label = T,
-        label.box = T,
-        label.size = 3,
-        repel = T,
-        raster = T,
-        raster.dpi = c(1024, 1024),
-        pt.size = 3) +
-  ggtitle("") +
-  theme_classic() +
-  NoLegend() +
-  NoAxes() +
-  coord_fixed(1)
+#DimPlot(seurat_data,
+#        group.by = "annot",
+#        cols = carspp1_celltype_col,
+#        reduction = reduction,
+#        label = T,
+#        label.box = T,
+#        label.size = 3,
+#        repel = T,
+#        raster = T,
+#        raster.dpi = c(1024, 1024),
+#        pt.size = 3) +
+#  ggtitle("") +
+#  theme_classic() +
+#  NoLegend() +
+#  NoAxes() +
+#  coord_fixed(1)
 
 seurat_data$Sample <- seurat_data$orig.ident
 seurat_data$Sample <- gsub("SPP1\\+CAR", "CAR_SPP1", seurat_data$Sample)
@@ -84,6 +83,22 @@ DimPlot(seurat_data,
         label.box = T) +
   coord_fixed() +
   NoLegend()
+
+```
+
+UMAPs of cell types by group
+
+```{r, message = F, warning = F, fig.width = 10, fig.height = 4, results = 'hide'}
+
+DimPlot(seurat_data,
+        group.by = "annot",
+        split.by = "Sample",
+        reduction = "integratedSCTumap",
+        cols = carspp1_celltype_col) +
+        #label = T,
+        #repel = T,
+        #label.box = T) +
+  coord_fixed()
 
 ```
 
