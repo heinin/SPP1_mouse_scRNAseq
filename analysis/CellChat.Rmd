@@ -51,8 +51,8 @@ CellChat was run for Day 16 only using code/CellChat.R.
 ```{r, message = F, warning = F}
 
 seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
-CC_objects_compare <- readRDS("/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_compare.rsd")
-CC_merged_object <- readRDS("/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_merged.rds")
+CC_objects_compare <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_compare.rsd")
+CC_merged_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_merged.rds")
 
 # Sorting levels for plotting
 celltypes <- c(sort(c(grep("^M", unique(seurat_object$annot), value = T), c("Neut1"))),
@@ -303,7 +303,7 @@ for (i in 1:length(CC_objects_compare)) {
                       signaling = pathways.show,
                       layout = "chord",
                       signaling.name = paste(pathways.show, names(CC_objects_compare)[i]),
-                      color.use = PD1_Kluc_celltype_col)
+                      color.use = carspp1_celltype_col)
 }
 
 pathways.show <- c("ApoE") 
@@ -313,7 +313,7 @@ for (i in 1:length(CC_objects_compare)) {
   netVisual_chord_cell(CC_objects_compare[[i]],
                        signaling = pathways.show,
                        title.name = paste0(pathways.show, " signaling network - ", names(CC_objects_compare)[i]),
-                       color.use = PD1_Kluc_celltype_col)
+                       color.use = carspp1_celltype_col)
 }
 
 par(mfrow = c(1, 2), xpd=TRUE)
@@ -362,9 +362,8 @@ VlnPlot(seurat_object,
         cols = c("aquamarine3", "deeppink3")) &
   theme_bw() &
   xlab("") &
-  ylab("Log-normalized expression") &
-  #NoLegend() +
-  manuscript_theme
+  ylab("Log-normalized expression")
+  #NoLegend()
 
 ```
 
@@ -380,6 +379,27 @@ VlnPlot(seurat_object,
 #CC_merged_object$sources
 
 netVisual_bubble(CC_merged_object, sources.use = 16, targets.use = c(3, 4, 5, 6, 7, 8, 9), thresh = 1, comparison = c(1, 2), angle.x = 45)
+
+```
+
+## CD4 cells vs. others
+
+```{r, message = F, warning = F, fig.width = 10, fig.height = 24}
+
+unique(CC_merged_object@meta$annot)
+
+# Compare all the interactions sending from CD4
+netVisual_bubble(CC_merged_object, sources.use = 6,
+                 targets.use = setdiff(seq(1, length(celltypes)), c(6)),
+                 thresh = 1, comparison = c(1, 2), angle.x = 45)
+
+netVisual_bubble(CC_merged_object, sources.use = 10,
+                 targets.use = setdiff(seq(1, length(celltypes)), c(10)),
+                 thresh = 1, comparison = c(1, 2), angle.x = 45)
+
+netVisual_bubble(CC_merged_object, sources.use = 13,
+                 targets.use = setdiff(seq(1, length(celltypes)), c(13)),
+                 thresh = 1, comparison = c(1, 2), angle.x = 45)
 
 ```
 

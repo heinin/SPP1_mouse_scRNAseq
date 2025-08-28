@@ -50,6 +50,26 @@ unique(seurat_data$annot)
 
 ```
 
+### Top markers by celltype
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 5, fig.height = 5}
+
+markers <- presto::wilcoxauc(seurat_data,
+                             group_by = "annot",
+                             assay = "data",
+                             seurat_assay = "RNA_human")
+
+#markers <- markers[-which(markers$feature %in% grep("MT-", markers$feature, value = T)),]
+#markers <- markers[-which(markers$feature %in% grep("^RP", markers$feature, value = T)),]
+
+markers_sig <- markers %>%
+  filter(padj < 0.01,
+         abs(logFC) > 1)
+
+write.table(markers_sig, "/home/hnatri/SPP1_mouse_scRNAseq/annot_sig_top_markers.tsv", quote = F, row.names = F, sep = "\t")
+
+```
+
 ## Human T cell canonical markers
 
 ### Group by celltype and treatment

@@ -16,5 +16,6 @@ Project directory in [Google Drive](https://drive.google.com/drive/folders/1tP_g
 2. [Analyzing compartments](analyze_compartments.html)\
 3. [Comparative analysis](comparative_analysis.html)\
 4. [Lymphoid markers](lymphoid_myeloid_markers.html)\
+5. [CellChat.html](CellChat.html)\
 
 Contact: Heini M Natri, hnatri@tgen.org
