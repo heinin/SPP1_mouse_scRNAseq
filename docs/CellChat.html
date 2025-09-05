@@ -394,7 +394,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-08-28
+<strong>Last updated:</strong> 2025-09-05
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -570,15 +570,15 @@ code/colors_themes.R
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtree25a16f18cead2b5c48e714bd13f31527e39941dbtargetblank25a16f1a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtreeab5e5b93044f9a5b6469e729f66c64661fecb72atargetblankab5e5b9a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/25a16f18cead2b5c48e714bd13f31527e39941db" target="_blank">25a16f1</a>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/ab5e5b93044f9a5b6469e729f66c64661fecb72a" target="_blank">ab5e5b9</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtree25a16f18cead2b5c48e714bd13f31527e39941dbtargetblank25a16f1a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtreeab5e5b93044f9a5b6469e729f66c64661fecb72atargetblankab5e5b9a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -588,7 +588,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/25a16f18cead2b5c48e714bd13f31527e39941db" target="_blank">25a16f1</a>.
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/ab5e5b93044f9a5b6469e729f66c64661fecb72a" target="_blank">ab5e5b9</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -606,21 +606,17 @@ Ignored files:
     Ignored:    .RData
     Ignored:    analysis/figure/
 
-Untracked files:
-    Untracked:  annot_sig_top_markers.tsv
-    Untracked:  code/CellChat.Rout
-    Untracked:  code/slurm.24628778.err
-    Untracked:  code/slurm.24628778.out
-    Untracked:  code/slurm.24636131.err
-    Untracked:  code/slurm.24636131.out
-    Untracked:  code/slurm.24649441.err
-    Untracked:  code/slurm.24649441.out
-
 Unstaged changes:
     Modified:   Rplots.pdf
     Modified:   analysis/CellChat.Rmd
-    Modified:   analysis/index.Rmd
-    Modified:   analysis/lymphoid_myeloid_markers.Rmd
+    Modified:   code/CellChat.R
+    Modified:   code/CellChat.Rout
+    Deleted:    code/slurm.24628778.err
+    Deleted:    code/slurm.24628778.out
+    Deleted:    code/slurm.24636131.err
+    Deleted:    code/slurm.24636131.out
+    Deleted:    code/slurm.24649441.err
+    Deleted:    code/slurm.24649441.out
 
 </code></pre>
 <p>
@@ -666,6 +662,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/analysis/CellChat.Rmd" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+<td>
+CD4 cells vs. others CellChat
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/heinin/SPP1_mouse_scRNAseq/45ec98cf95e2620a3356042feb8f72334949506e/docs/CellChat.html" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+<td>
+CD4 cells vs. others CellChat
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -725,13 +755,21 @@ source(&quot;/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R&quot;)</code>
 <h2>Inspecting results</h2>
 <div id="import-data" class="section level3">
 <h3>Import data</h3>
-<pre class="r"><code>seurat_object &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds&quot;)
-CC_objects_compare &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_compare.rsd&quot;)
-CC_merged_object &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_merged.rds&quot;)
+<pre class="r"><code>seurat_object &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds&quot;)
+#CC_objects_compare &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_compare.rsd&quot;)
+#CC_merged_object &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_merged.rds&quot;)
+CC_objects_compare &lt;- readRDS(&quot;/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_compare.rsd&quot;)
+CC_merged_object &lt;- readRDS(&quot;/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_merged.rds&quot;)
 
 # Sorting levels for plotting
-celltypes &lt;- c(sort(c(grep(&quot;^M&quot;, unique(seurat_object$annot), value = T), c(&quot;Neut1&quot;))),
-               sort(grep(&quot;^L&quot;, unique(seurat_object$annot), value = T)), c(&quot;NK&quot;, &quot;Treg&quot;, &quot;B1&quot;, &quot;ILC&quot;, &quot;DC&quot;))
+#celltypes &lt;- c(sort(c(grep(&quot;^M&quot;, unique(seurat_object$annot), value = T), c(&quot;Neut1&quot;))),
+#               sort(grep(&quot;^L&quot;, unique(seurat_object$annot), value = T)), c(&quot;NK&quot;, &quot;Treg&quot;, &quot;B1&quot;, &quot;ILC&quot;, &quot;DC&quot;))
+# annot_granular
+celltypes &lt;- sort(unique(seurat_object$annot_granular))
+
+seurat_object$celltype &lt;- seurat_object$annot_granular
+seurat_object$celltype &lt;- factor(seurat_object$celltype,
+                                 levels = celltypes)
 
 CC_objects_compare[[1]]@meta$celltype &lt;- factor(CC_objects_compare[[1]]@meta$celltype,
                                                   levels = celltypes)
@@ -741,18 +779,149 @@ CC_objects_compare[[2]]@meta$celltype &lt;- factor(CC_objects_compare[[2]]@meta$
                                                   levels = celltypes)
 CC_objects_compare[[2]]@idents &lt;- factor(CC_objects_compare[[2]]@idents,
                                          levels = celltypes)</code></pre>
+</div>
+<div id="umap-of-celltypes" class="section level3">
+<h3>UMAP of celltypes</h3>
+<pre class="r"><code>DimPlot(seurat_object,
+        group.by = &quot;annot_granular&quot;,
+        #cols = carspp1_celltype_col,
+        reduction = &quot;integratedSCTumap&quot;,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle(&quot;&quot;) +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)</code></pre>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-3-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-3-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Compare the total number of interactions and interaction strength
 gg1 &lt;- compareInteractions(CC_merged_object, show.legend = F, group = c(1,2))
 gg2 &lt;- compareInteractions(CC_merged_object, show.legend = F, group = c(1,2),
                            measure = &quot;weight&quot;)
 gg1 + gg2</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-3-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-4-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-4-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Differential number of interactions or interaction strength among different cell populations
 par(mfrow = c(1,2), xpd=TRUE)
 netVisual_diffInteraction(CC_merged_object, weight.scale = T)
 netVisual_diffInteraction(CC_merged_object, weight.scale = T,
                           measure = &quot;weight&quot;)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-4-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-5-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-5-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Heatmaps
 gg1 &lt;- netVisual_heatmap(CC_merged_object,
                          cluster.rows = T,
@@ -762,7 +931,7 @@ gg2 &lt;- netVisual_heatmap(CC_merged_object,
                          cluster.rows = T,
                          cluster.cols = T)
 gg1 + gg2</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-4-2.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-5-2.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># To better control the node size and edge weights of the inferred networks
 # across different datasets, we compute the maximum number of cells per cell
 # group and the maximum number of interactions (or interaction weights) across all datasets.
@@ -777,7 +946,7 @@ for (i in 1:length(CC_objects_compare)) {
                    title.name = paste0(&quot;Number of interactions - &quot;, names(CC_objects_compare)[i]),
                    color.use = carspp1_celltype_col)
 }</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-4-3.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-5-3.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># Need to run netAnalysis_computeCentrality before netAnalysis_signalingRole_scatter
 
 # Compute the network centrality scores
@@ -786,9 +955,8 @@ CC_objects_compare &lt;- lapply(CC_objects_compare, function(xx){
 })
 
 # Visualize the computed centrality scores using heatmap, allowing ready identification of major signaling roles of cell groups
-#netAnalysis_signalingRole_network(CC_objects_compare[[1]], signaling = pathways.show, width = 8, height = 2.5, font.size = 10)
-
-# Compare the major sources and targets in 2D space
+#netAnalysis_signalingRole_network(CC_objects_compare[[1]], signaling = pathways.show, width = 8, height = 2.5, font.size = 10)</code></pre>
+<pre class="r"><code># Compare the major sources and targets in 2D space
 num.link &lt;- sapply(CC_objects_compare, function(x) {rowSums(x@net$count) + colSums(x@net$count)-diag(x@net$count)})
 weight.MinMax &lt;- c(min(num.link), max(num.link)) # control the dot size in the different datasets
 gg &lt;- list()
@@ -800,7 +968,6 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 patchwork::wrap_plots(plots = gg)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-4-4.png" width="1152" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div
@@ -826,7 +993,44 @@ ranknet_res &lt;- rankNet(CC_merged_object,
                        thresh = 0.01)
 
 ranknet_res</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-7-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ranknet_data &lt;- ggplot_build(ranknet_res)
 info_flow_data &lt;- ranknet_data$plot$data
 
@@ -838,9 +1042,83 @@ barplot_colors &lt;- c(&quot;CART&quot; = &quot;deeppink3&quot;, &quot;CART_SPP1
 
 hist(info_flow_data$contribution, breaks = 55, main = &quot;&quot;, xlab = &quot;Information flow&quot;)
 abline(v=1, col = &quot;red&quot;)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-8-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>hist(info_flow_data$contribution, breaks = 20)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-2">
+Past versions of unnamed-chunk-8-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-8-2.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Plotting delta
 barplot_colors &lt;- c(&quot;aquamarine4&quot;, &quot;deeppink3&quot;)
 
@@ -868,7 +1146,44 @@ delta_plot &lt;- info_flow_data %&gt;%
   theme(axis.text.x = element_text(angle = 45, vjust = 0.9, hjust=0.9))
 
 delta_plot</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-7-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-9-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-9-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Identify signaling changes associated with one cell group
 # Visualizing differential outgoing and incoming signaling changes
 
@@ -879,7 +1194,44 @@ par(mfrow = c(1,2), xpd=TRUE)
 for (i in 1:length(CC_objects_compare)) {
   netVisual_aggregate(CC_objects_compare[[i]], signaling = pathways.show, layout = &quot;circle&quot;, edge.weight.max = weight.max[1], edge.width.max = 10, signaling.name = paste(pathways.show, names(CC_objects_compare)[i]))
 }</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-1.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
+Past versions of unnamed-chunk-10-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-10-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Heatmap based on a single object 
 par(mfrow = c(1,2), xpd=TRUE)
 ht &lt;- list()
@@ -894,7 +1246,44 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-2.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-2.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-2">
+Past versions of unnamed-chunk-10-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-10-2.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>pathways.show &lt;- c(&quot;ApoE&quot;) 
 par(mfrow = c(1,2), xpd=TRUE)
 ht &lt;- list()
@@ -908,7 +1297,44 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-3.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-3.png" width="1152" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-3">
+Past versions of unnamed-chunk-10-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-10-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-10-3.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>pathways.show &lt;- c(&quot;SPP1&quot;)
 par(mfrow = c(1,2), xpd=TRUE)
 ht &lt;- list()
@@ -922,7 +1348,7 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-4.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-4.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>pathways.show &lt;- c(&quot;MHC-I&quot;)
 par(mfrow = c(1,2), xpd=TRUE)
 ht &lt;- list()
@@ -936,7 +1362,7 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-5.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-5.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>pathways.show &lt;- c(&quot;MHC-II&quot;)
 par(mfrow = c(1,2), xpd=TRUE)
 ht &lt;- list()
@@ -950,7 +1376,7 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-6.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-6.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># Chord diagram
 pathways.show &lt;- c(&quot;MHC-I&quot;) 
 par(mfrow = c(1,2), xpd=TRUE)
@@ -961,7 +1387,7 @@ for (i in 1:length(CC_objects_compare)) {
                       signaling.name = paste(pathways.show, names(CC_objects_compare)[i]),
                       color.use = carspp1_celltype_col)
 }</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-7.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-7.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>pathways.show &lt;- c(&quot;ApoE&quot;) 
 par(mfrow = c(1,2), xpd=TRUE)
 for (i in 1:length(CC_objects_compare)) {
@@ -971,7 +1397,7 @@ for (i in 1:length(CC_objects_compare)) {
                        title.name = paste0(pathways.show, &quot; signaling network - &quot;, names(CC_objects_compare)[i]),
                        color.use = carspp1_celltype_col)
 }</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-8.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-8.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfrow = c(1, 2), xpd=TRUE)
 
 # Compare the signaling gene expression distribution between different datasets
@@ -980,7 +1406,7 @@ plotGeneExpression(CC_merged_object,
                    signaling = &quot;SPP1&quot;,
                    split.by = &quot;Sample&quot;,
                    colors.ggplot = T)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-9.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-9.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>#color.use = c(&quot;red&quot;, &quot;blue&quot;))
 
 DefaultAssay(seurat_object) &lt;- &quot;RNA&quot;
@@ -998,7 +1424,7 @@ VlnPlot(seurat_object,
   theme_bw() &amp;
   RotatedAxis() &amp;
   xlab(&quot;&quot;)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-10.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-10.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>VlnPlot(seurat_object,
         features = plot_features,
         group.by = &quot;orig.ident&quot;,
@@ -1008,7 +1434,7 @@ VlnPlot(seurat_object,
   theme_bw() &amp;
   RotatedAxis() &amp;
   xlab(&quot;&quot;)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-11.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-11.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>VlnPlot(seurat_object,
         features = plot_features,
         group.by = &quot;annot&quot;,
@@ -1020,7 +1446,7 @@ VlnPlot(seurat_object,
   theme_bw() &amp;
   xlab(&quot;&quot;) &amp;
   ylab(&quot;Log-normalized expression&quot;)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-8-12.png" width="1152" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-12.png" width="1152" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>  #NoLegend()</code></pre>
 </div>
 <div id="m7-vs.-lymphoid-cells" class="section level2">
@@ -1031,32 +1457,74 @@ VlnPlot(seurat_object,
 #netVisual_chord_gene(CC_objects_compare[[&quot;ADJ_CC&quot;]], sources.use = c(18), targets.use = c(20), lab.cex = 0.5, title.name = paste0(&quot;Signaling from M7 - ADJ&quot;))
 
 #CC_merged_object$sources
-
-netVisual_bubble(CC_merged_object, sources.use = 16, targets.use = c(3, 4, 5, 6, 7, 8, 9), thresh = 1, comparison = c(1, 2), angle.x = 45)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-9-1.png" width="768" style="display: block; margin: auto;" /></p>
+levels(CC_merged_object@idents[[2]])</code></pre>
+<pre><code> [1] &quot;T5&quot;                  &quot;M10&quot;                 &quot;T4_CD4&quot;             
+ [4] &quot;M9&quot;                  &quot;NK&quot;                  &quot;M1_suppressive&quot;     
+ [7] &quot;M5_suppressive&quot;      &quot;M2_suppressive&quot;      &quot;M4&quot;                 
+[10] &quot;T1_CD8&quot;              &quot;M8_suppressive_G2MS&quot; &quot;M7&quot;                 
+[13] &quot;T2_CD4&quot;              &quot;M3_suppressive&quot;      &quot;M11&quot;                
+[16] &quot;T3_CD4_PD1&quot;          &quot;M15&quot;                 &quot;M16&quot;                
+[19] &quot;M6&quot;                  &quot;T6&quot;                  &quot;B1&quot;                 </code></pre>
+<pre class="r"><code>netVisual_bubble(CC_merged_object, sources.use = 12, thresh = 0.05, comparison = c(1, 2), angle.x = 45)</code></pre>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-11-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/45ec98cf95e2620a3356042feb8f72334949506e/docs/figure/CellChat.Rmd/unnamed-chunk-11-1.png" target="_blank">45ec98c</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-08-28
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="cd4-cells-vs.-others" class="section level2">
 <h2>CD4 cells vs. others</h2>
-<pre class="r"><code>unique(CC_merged_object@meta$annot)</code></pre>
-<pre><code> [1] &quot;B1&quot;                  &quot;DC&quot;                  &quot;M2_suppressive&quot;     
- [4] &quot;M1_suppressive&quot;      &quot;M4&quot;                  &quot;L1_CD4&quot;             
- [7] &quot;L2_CD8&quot;              &quot;M3_suppressive&quot;      &quot;NK&quot;                 
-[10] &quot;L4_lowerQ&quot;           &quot;Neut1&quot;               &quot;M5_suppressive&quot;     
-[13] &quot;L3_CD4_G2MS&quot;         &quot;L5_lowerQ&quot;           &quot;Treg&quot;               
-[16] &quot;ILC&quot;                 &quot;M8_suppressive_G2MS&quot; &quot;M10&quot;                </code></pre>
+<pre class="r"><code>levels(CC_merged_object@idents[[2]])</code></pre>
+<pre><code> [1] &quot;T5&quot;                  &quot;M10&quot;                 &quot;T4_CD4&quot;             
+ [4] &quot;M9&quot;                  &quot;NK&quot;                  &quot;M1_suppressive&quot;     
+ [7] &quot;M5_suppressive&quot;      &quot;M2_suppressive&quot;      &quot;M4&quot;                 
+[10] &quot;T1_CD8&quot;              &quot;M8_suppressive_G2MS&quot; &quot;M7&quot;                 
+[13] &quot;T2_CD4&quot;              &quot;M3_suppressive&quot;      &quot;M11&quot;                
+[16] &quot;T3_CD4_PD1&quot;          &quot;M15&quot;                 &quot;M16&quot;                
+[19] &quot;M6&quot;                  &quot;T6&quot;                  &quot;B1&quot;                 </code></pre>
 <pre class="r"><code># Compare all the interactions sending from CD4
-netVisual_bubble(CC_merged_object, sources.use = 6,
-                 targets.use = setdiff(seq(1, length(celltypes)), c(6)),
-                 thresh = 1, comparison = c(1, 2), angle.x = 45)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-1.png" width="960" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>netVisual_bubble(CC_merged_object, sources.use = 10,
-                 targets.use = setdiff(seq(1, length(celltypes)), c(10)),
-                 thresh = 1, comparison = c(1, 2), angle.x = 45)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-2.png" width="960" style="display: block; margin: auto;" /></p>
+netVisual_bubble(CC_merged_object, sources.use = 3,
+                 thresh = 0.05, comparison = c(1, 2), angle.x = 45)</code></pre>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-12-1.png" width="960" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>netVisual_bubble(CC_merged_object, sources.use = 13,
-                 targets.use = setdiff(seq(1, length(celltypes)), c(13)),
-                 thresh = 1, comparison = c(1, 2), angle.x = 45)</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-10-3.png" width="960" style="display: block; margin: auto;" /></p>
+                 thresh = 0.05, comparison = c(1, 2), angle.x = 45)</code></pre>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-12-2.png" width="960" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>netVisual_bubble(CC_merged_object, sources.use = 16,
+                 thresh = 0.05, comparison = c(1, 2), angle.x = 45)</code></pre>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-12-3.png" width="960" style="display: block; margin: auto;" /></p>
 </div>
 <div id="selected-pathways" class="section level2">
 <h2>Selected pathways</h2>
@@ -1071,7 +1539,7 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-11-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-13-1.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>pathways.show &lt;- c(&quot;MHC-II&quot;)
 par(mfrow = c(1,2), xpd=TRUE)
 ht &lt;- list()
@@ -1083,7 +1551,7 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-11-2.png" width="864" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-13-2.png" width="864" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>pathways.show &lt;- c(&quot;MHC-I&quot;)
 par(mfrow = c(1,2), xpd=TRUE)
 ht &lt;- list()
@@ -1100,7 +1568,7 @@ for (i in 1:length(CC_objects_compare)) {
 }
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, &quot;cm&quot;))</code></pre>
-<p><img src="figure/CellChat.Rmd/unnamed-chunk-11-3.png" width="864" style="display: block; margin: auto;" /></p>
+<p><img src="figure/CellChat.Rmd/unnamed-chunk-13-3.png" width="864" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

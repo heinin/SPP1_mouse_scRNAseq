@@ -31,21 +31,26 @@ source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
 # Importing data and creating inputs
 #==============================================================================#
 
-seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+
+# annot_granular
+seurat_object$celltype <- seurat_object$annot_granular
+seurat_object$celltype <- factor(seurat_object$celltype,
+                                 levels = sort(unique(seurat_object$celltype)))
 
 # Cluster annotations
-gs4_deauth()
-cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
-cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
-
-# Updating annotations
-seurat_object$annot <- mapvalues(x = seurat_object$sub.cluster,
-                                 from = cluster_annot$sub.cluster,
-                                 to = cluster_annot$annot)
-
-seurat_object$celltype <- factor(seurat_object$annot,
-                                 levels = sort(unique(seurat_object$annot)))
-
+#gs4_deauth()
+#cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
+#cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
+#
+## Updating annotations
+#seurat_object$annot <- mapvalues(x = seurat_object$sub.cluster,
+#                                 from = cluster_annot$sub.cluster,
+#                                 to = cluster_annot$annot)
+#
+#seurat_object$celltype <- factor(seurat_object$annot,
+#                                 levels = sort(unique(seurat_object$annot)))
+#
 Idents(seurat_object) <- seurat_object$celltype
 seurat_object$Sample <- seurat_object$orig.ident
 seurat_object$Sample <- gsub("SPP1\\+CAR", "CAR_SPP1", seurat_object$Sample)

@@ -50,13 +50,21 @@ CellChat was run for Day 16 only using code/CellChat.R.
 
 ```{r, message = F, warning = F}
 
-seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
-CC_objects_compare <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_compare.rsd")
-CC_merged_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_merged.rds")
+seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+#CC_objects_compare <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_compare.rsd")
+#CC_merged_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_merged.rds")
+CC_objects_compare <- readRDS("/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_compare.rsd")
+CC_merged_object <- readRDS("/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_merged.rds")
 
 # Sorting levels for plotting
-celltypes <- c(sort(c(grep("^M", unique(seurat_object$annot), value = T), c("Neut1"))),
-               sort(grep("^L", unique(seurat_object$annot), value = T)), c("NK", "Treg", "B1", "ILC", "DC"))
+#celltypes <- c(sort(c(grep("^M", unique(seurat_object$annot), value = T), c("Neut1"))),
+#               sort(grep("^L", unique(seurat_object$annot), value = T)), c("NK", "Treg", "B1", "ILC", "DC"))
+# annot_granular
+celltypes <- sort(unique(seurat_object$annot_granular))
+
+seurat_object$celltype <- seurat_object$annot_granular
+seurat_object$celltype <- factor(seurat_object$celltype,
+                                 levels = celltypes)
 
 CC_objects_compare[[1]]@meta$celltype <- factor(CC_objects_compare[[1]]@meta$celltype,
                                                   levels = celltypes)
@@ -66,6 +74,29 @@ CC_objects_compare[[2]]@meta$celltype <- factor(CC_objects_compare[[2]]@meta$cel
                                                   levels = celltypes)
 CC_objects_compare[[2]]@idents <- factor(CC_objects_compare[[2]]@idents,
                                          levels = celltypes)
+
+```
+
+### UMAP of celltypes
+
+```{r, message = F, warning = F, fig.width=5, fig.height=5}
+
+DimPlot(seurat_object,
+        group.by = "annot_granular",
+        #cols = carspp1_celltype_col,
+        reduction = "integratedSCTumap",
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
 
 ```
 
@@ -121,6 +152,10 @@ CC_objects_compare <- lapply(CC_objects_compare, function(xx){
 
 # Visualize the computed centrality scores using heatmap, allowing ready identification of major signaling roles of cell groups
 #netAnalysis_signalingRole_network(CC_objects_compare[[1]], signaling = pathways.show, width = 8, height = 2.5, font.size = 10)
+
+```
+
+```{r, message = F, warning = F, fig.width=12, fig.height=6, eval = F}
 
 # Compare the major sources and targets in 2D space
 num.link <- sapply(CC_objects_compare, function(x) {rowSums(x@net$count) + colSums(x@net$count)-diag(x@net$count)})
@@ -377,8 +412,9 @@ VlnPlot(seurat_object,
 #netVisual_chord_gene(CC_objects_compare[["ADJ_CC"]], sources.use = c(18), targets.use = c(20), lab.cex = 0.5, title.name = paste0("Signaling from M7 - ADJ"))
 
 #CC_merged_object$sources
+levels(CC_merged_object@idents[[2]])
 
-netVisual_bubble(CC_merged_object, sources.use = 16, targets.use = c(3, 4, 5, 6, 7, 8, 9), thresh = 1, comparison = c(1, 2), angle.x = 45)
+netVisual_bubble(CC_merged_object, sources.use = 12, thresh = 0.05, comparison = c(1, 2), angle.x = 45)
 
 ```
 
@@ -386,20 +422,17 @@ netVisual_bubble(CC_merged_object, sources.use = 16, targets.use = c(3, 4, 5, 6,
 
 ```{r, message = F, warning = F, fig.width = 10, fig.height = 24}
 
-unique(CC_merged_object@meta$annot)
+levels(CC_merged_object@idents[[2]])
 
 # Compare all the interactions sending from CD4
-netVisual_bubble(CC_merged_object, sources.use = 6,
-                 targets.use = setdiff(seq(1, length(celltypes)), c(6)),
-                 thresh = 1, comparison = c(1, 2), angle.x = 45)
-
-netVisual_bubble(CC_merged_object, sources.use = 10,
-                 targets.use = setdiff(seq(1, length(celltypes)), c(10)),
-                 thresh = 1, comparison = c(1, 2), angle.x = 45)
+netVisual_bubble(CC_merged_object, sources.use = 3,
+                 thresh = 0.05, comparison = c(1, 2), angle.x = 45)
 
 netVisual_bubble(CC_merged_object, sources.use = 13,
-                 targets.use = setdiff(seq(1, length(celltypes)), c(13)),
-                 thresh = 1, comparison = c(1, 2), angle.x = 45)
+                 thresh = 0.05, comparison = c(1, 2), angle.x = 45)
+
+netVisual_bubble(CC_merged_object, sources.use = 16,
+                 thresh = 0.05, comparison = c(1, 2), angle.x = 45)
 
 ```
 
