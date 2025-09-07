@@ -44,7 +44,7 @@ Annotations were updated after subclustering and annotating myeloid and lymphoid
 
 ```{r, message = F, warning = F, results = 'hide', fig.width = 6, fig.height = 6}
 
-seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_granular_annot.rds")
 
 # Updating annotations
 #seurat_data$annot <- mapvalues(x = seurat_data$sub.cluster,
