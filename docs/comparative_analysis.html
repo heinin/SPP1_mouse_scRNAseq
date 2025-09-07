@@ -395,7 +395,7 @@ aria-hidden="true"></span> </a>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2025-07-17
+<strong>Last updated:</strong> 2025-09-05
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -571,15 +571,15 @@ code/colors_themes.R
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtreecb8043f0325eabe94160d7117530169c9e88c4d7targetblankcb8043fa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtree593cd45c249bb5c654b538a0290316cecdc86c47targetblank593cd45a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/cb8043f0325eabe94160d7117530169c9e88c4d7" target="_blank">cb8043f</a>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/593cd45c249bb5c654b538a0290316cecdc86c47" target="_blank">593cd45</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtreecb8043f0325eabe94160d7117530169c9e88c4d7targetblankcb8043fa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomheininSPP1mousescRNAseqtree593cd45c249bb5c654b538a0290316cecdc86c47targetblank593cd45a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -589,7 +589,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/cb8043f0325eabe94160d7117530169c9e88c4d7" target="_blank">cb8043f</a>.
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/tree/593cd45c249bb5c654b538a0290316cecdc86c47" target="_blank">593cd45</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -607,6 +607,7 @@ Ignored files:
     Ignored:    .RData
 
 Unstaged changes:
+    Modified:   analysis/CellChat.Rmd
     Modified:   analysis/comparative_analysis.Rmd
 
 </code></pre>
@@ -653,6 +654,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/analysis/comparative_analysis.Rmd" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+<td>
+Added split UMAPs
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/heinin/SPP1_mouse_scRNAseq/25a16f18cead2b5c48e714bd13f31527e39941db/docs/comparative_analysis.html" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+<td>
+Added split UMAPs
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -714,53 +749,37 @@ source(&quot;/home/hnatri/SPP1_mouse_scRNAseq/code/CART_plot_functions.R&quot;)
 source(&quot;/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R&quot;)
 
 # Cluster annotations
-gs4_deauth()
-cluster_annot  &lt;- gs4_get(&quot;https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing&quot;)
-cluster_annot &lt;- read_sheet(cluster_annot, sheet = &quot;Cluster annotation&quot;)</code></pre>
+#gs4_deauth()
+#cluster_annot  &lt;- gs4_get(&quot;https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?us#p=sharing&quot;)
+#cluster_annot &lt;- read_sheet(cluster_annot, sheet = &quot;Cluster annotation&quot;)</code></pre>
 </div>
 <div id="import-data" class="section level2">
 <h2>Import data</h2>
-<pre class="r"><code>seurat_data &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds&quot;)
+<p>Annotations were updated after subclustering and annotating myeloid
+and lymphoid cells.</p>
+<pre class="r"><code>seurat_data &lt;- readRDS(&quot;/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds&quot;)
 
 # Updating annotations
-seurat_data$annot &lt;- mapvalues(x = seurat_data$sub.cluster,
-                               from = cluster_annot$sub.cluster,
-                               to = cluster_annot$annot)
-
-#DimPlot(seurat_data,
-#        group.by = &quot;annot&quot;,
-#        cols = carspp1_celltype_col,
-#        reduction = reduction,
-#        label = T,
-#        label.box = T,
-#        label.size = 3,
-#        repel = T,
-#        raster = T,
-#        raster.dpi = c(1024, 1024),
-#        pt.size = 3) +
-#  ggtitle(&quot;&quot;) +
-#  theme_classic() +
-#  NoLegend() +
-#  NoAxes() +
-#  coord_fixed(1)
-
-seurat_data$Sample &lt;- seurat_data$orig.ident
-seurat_data$Sample &lt;- gsub(&quot;SPP1\\+CAR&quot;, &quot;CAR_SPP1&quot;, seurat_data$Sample)
-seurat_data$Sample &lt;- gsub(&quot;TUMOR&quot;, &quot;CTRL&quot;, seurat_data$Sample)
-
-# Celltype colors
-carspp1_celltype_col &lt;- colorRampPalette(brewer.pal(10, &quot;Paired&quot;))(nb.cols &lt;- length(unique(seurat_data$annot)))
-names(carspp1_celltype_col) &lt;- sort(unique(seurat_data$annot))
+#seurat_data$annot &lt;- mapvalues(x = seurat_data$sub.cluster,
+#                               from = cluster_annot$sub.cluster,
+#                               to = cluster_annot$annot)
 
 DimPlot(seurat_data,
-        group.by = &quot;annot&quot;,
-        reduction = &quot;integratedSCTumap&quot;,
-        cols = carspp1_celltype_col,
+        group.by = &quot;annot_granular&quot;,
+        #cols = carspp1_celltype_col,
+        reduction = reduction,
         label = T,
+        label.box = T,
+        label.size = 3,
         repel = T,
-        label.box = T) +
-  coord_fixed() +
-  NoLegend()</code></pre>
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle(&quot;&quot;) +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)</code></pre>
 <p><img src="figure/comparative_analysis.Rmd/unnamed-chunk-2-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-1">
@@ -786,7 +805,73 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-2-1.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/f226445e521c3a2d635a15304bbec468db037943/docs/figure/comparative_analysis.Rmd/unnamed-chunk-2-1.png" target="_blank">f226445</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>seurat_data$Sample &lt;- seurat_data$orig.ident
+seurat_data$Sample &lt;- gsub(&quot;SPP1\\+CAR&quot;, &quot;CAR_SPP1&quot;, seurat_data$Sample)
+seurat_data$Sample &lt;- gsub(&quot;TUMOR&quot;, &quot;CTRL&quot;, seurat_data$Sample)
+
+# Celltype colors
+carspp1_celltype_col &lt;- colorRampPalette(brewer.pal(10, &quot;Paired&quot;))(nb.cols &lt;- length(unique(seurat_data$annot_granular)))
+names(carspp1_celltype_col) &lt;- sort(unique(seurat_data$annot_granular))
+
+DimPlot(seurat_data,
+        group.by = &quot;annot_granular&quot;,
+        reduction = &quot;integratedSCTumap&quot;,
+        cols = carspp1_celltype_col,
+        label = T,
+        repel = T,
+        label.box = T) +
+  coord_fixed() +
+  NoLegend()</code></pre>
+<p><img src="figure/comparative_analysis.Rmd/unnamed-chunk-2-2.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-2-2">
+Past versions of unnamed-chunk-2-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-2-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/f226445e521c3a2d635a15304bbec468db037943/docs/figure/comparative_analysis.Rmd/unnamed-chunk-2-2.png" target="_blank">f226445</a>
 </td>
 <td>
 heinin
@@ -801,7 +886,7 @@ heinin
 </div>
 <p>UMAPs of cell types by group</p>
 <pre class="r"><code>DimPlot(seurat_data,
-        group.by = &quot;annot&quot;,
+        group.by = &quot;annot_granular&quot;,
         split.by = &quot;Sample&quot;,
         reduction = &quot;integratedSCTumap&quot;,
         cols = carspp1_celltype_col) +
@@ -834,6 +919,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-3-1.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/f226445e521c3a2d635a15304bbec468db037943/docs/figure/comparative_analysis.Rmd/unnamed-chunk-3-1.png" target="_blank">f226445</a>
 </td>
 <td>
@@ -852,8 +948,8 @@ heinin
 <h2>Cell type proportions</h2>
 <pre class="r"><code>create_barplot(seurat_data,
                group_var = &quot;Sample&quot;,
-               plot_var = &quot;annot&quot;,
-               plot_levels = sort((unique(seurat_data$annot))),
+               plot_var = &quot;annot_granular&quot;,
+               plot_levels = sort((unique(seurat_data$annot_granular))),
                group_levels = c(&quot;CTRL&quot;, &quot;SPP1&quot;, &quot;CAR&quot;, &quot;CAR_SPP1&quot;),
                plot_colors = carspp1_celltype_col,
                var_names =  c(&quot;Frequency (%)&quot;, &quot;&quot;),
@@ -883,6 +979,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-4-1.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/f226445e521c3a2d635a15304bbec468db037943/docs/figure/comparative_analysis.Rmd/unnamed-chunk-4-1.png" target="_blank">f226445</a>
 </td>
 <td>
@@ -904,7 +1011,7 @@ vs. CTRL”) gets positive values.</p>
 
 # CAR vs. CTRL
 prop_test &lt;- permutation_test(
-  prop_test, cluster_identity = &quot;annot&quot;,
+  prop_test, cluster_identity = &quot;annot_granular&quot;,
   sample_2 = &quot;CAR&quot;, sample_1 = &quot;TUMOR&quot;,
   sample_identity = &quot;orig.ident&quot;)
 
@@ -912,9 +1019,46 @@ perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;CAR vs. CTRL&quot;)</code></pre>
 <p><img src="figure/comparative_analysis.Rmd/unnamed-chunk-5-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-5-1.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># SPP1 vs. CTRL
 prop_test &lt;- permutation_test(
-  prop_test, cluster_identity = &quot;annot&quot;,
+  prop_test, cluster_identity = &quot;annot_granular&quot;,
   sample_2 = &quot;SPP1&quot;, sample_1 = &quot;TUMOR&quot;,
   sample_identity = &quot;orig.ident&quot;)
 
@@ -922,9 +1066,46 @@ perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1 vs. CTRL&quot;)</code></pre>
 <p><img src="figure/comparative_analysis.Rmd/unnamed-chunk-5-2.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-2">
+Past versions of unnamed-chunk-5-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-5-2.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># CAR+SPP1 vs. CTRL
 prop_test &lt;- permutation_test(
-  prop_test, cluster_identity = &quot;annot&quot;,
+  prop_test, cluster_identity = &quot;annot_granular&quot;,
   sample_2 = &quot;SPP1+CAR&quot;, sample_1 = &quot;TUMOR&quot;,
   sample_identity = &quot;orig.ident&quot;)
 
@@ -932,9 +1113,46 @@ perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1+CAR vs. CTRL&quot;)</code></pre>
 <p><img src="figure/comparative_analysis.Rmd/unnamed-chunk-5-3.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-3">
+Past versions of unnamed-chunk-5-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-5-3.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># CAR+SPP1 vs. CAR
 prop_test &lt;- permutation_test(
-  prop_test, cluster_identity = &quot;annot&quot;,
+  prop_test, cluster_identity = &quot;annot_granular&quot;,
   sample_2 = &quot;SPP1+CAR&quot;, sample_1 = &quot;CAR&quot;,
   sample_identity = &quot;orig.ident&quot;)
 
@@ -942,9 +1160,46 @@ perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1+CAR vs. CAR&quot;)</code></pre>
 <p><img src="figure/comparative_analysis.Rmd/unnamed-chunk-5-4.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-4">
+Past versions of unnamed-chunk-5-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-5-4.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># CAR+SPP1 vs. SPP1
 prop_test &lt;- permutation_test(
-  prop_test, cluster_identity = &quot;annot&quot;,
+  prop_test, cluster_identity = &quot;annot_granular&quot;,
   sample_2 = &quot;SPP1+CAR&quot;, sample_1 = &quot;SPP1&quot;,
   sample_identity = &quot;orig.ident&quot;)
 
@@ -952,6 +1207,43 @@ perm_plot &lt;- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c(&quot;tomato&quot;, &quot;azure2&quot;)) + NoLegend() + ggtitle(&quot;SPP1+CAR vs. SPP1&quot;)</code></pre>
 <p><img src="figure/comparative_analysis.Rmd/unnamed-chunk-5-5.png" width="384" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-5">
+Past versions of unnamed-chunk-5-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/heinin/SPP1_mouse_scRNAseq/blob/25a16f18cead2b5c48e714bd13f31527e39941db/docs/figure/comparative_analysis.Rmd/unnamed-chunk-5-5.png" target="_blank">25a16f1</a>
+</td>
+<td>
+heinin
+</td>
+<td>
+2025-07-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="degs-by-cell-population" class="section level2">
 <h2>DEGs by cell population</h2>

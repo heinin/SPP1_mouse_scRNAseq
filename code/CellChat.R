@@ -31,7 +31,7 @@ source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
 # Importing data and creating inputs
 #==============================================================================#
 
-seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_granular_annot.rds")
 
 # annot_granular
 seurat_object$celltype <- seurat_object$annot_granular

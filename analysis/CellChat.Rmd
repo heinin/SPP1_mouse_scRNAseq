@@ -50,7 +50,7 @@ CellChat was run for Day 16 only using code/CellChat.R.
 
 ```{r, message = F, warning = F}
 
-seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+seurat_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_granular_annot.rds")
 #CC_objects_compare <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_compare.rsd")
 #CC_merged_object <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/CART_SPP1_Kluc_Cellchat_merged.rds")
 CC_objects_compare <- readRDS("/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_compare.rsd")
@@ -402,7 +402,7 @@ VlnPlot(seurat_object,
 
 ```
 
-## M7 vs. lymphoid cells
+## M7 vs. others
 
 ```{r, message = F, warning = F, fig.width = 8, fig.height = 20}
 
@@ -414,7 +414,9 @@ VlnPlot(seurat_object,
 #CC_merged_object$sources
 levels(CC_merged_object@idents[[2]])
 
-netVisual_bubble(CC_merged_object, sources.use = 12, thresh = 0.05, comparison = c(1, 2), angle.x = 45)
+netVisual_bubble(CC_merged_object, sources.use = 10, 
+                 #targets.use = setdiff(seq(1, 21), c(12)),
+                 thresh = 0.05, comparison = c(1, 2), angle.x = 45)
 
 ```
 
@@ -426,13 +428,36 @@ levels(CC_merged_object@idents[[2]])
 
 # Compare all the interactions sending from CD4
 netVisual_bubble(CC_merged_object, sources.use = 3,
+                 #targets.use = setdiff(seq(1, 21), c(16)),
                  thresh = 0.05, comparison = c(1, 2), angle.x = 45)
 
-netVisual_bubble(CC_merged_object, sources.use = 13,
+netVisual_bubble(CC_merged_object, sources.use = 14,
+                 #targets.use = setdiff(seq(1, 21), c(3)),
                  thresh = 0.05, comparison = c(1, 2), angle.x = 45)
 
-netVisual_bubble(CC_merged_object, sources.use = 16,
+netVisual_bubble(CC_merged_object, sources.use = 21,
+                 #targets.use = setdiff(seq(1, 21), c(13)),
                  thresh = 0.05, comparison = c(1, 2), angle.x = 45)
+
+```
+
+## Saving all significant pathways
+
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4}
+
+# Using the netVisual_bubble function to pull all LR pair results
+lr_all <- netVisual_bubble(CC_merged_object,
+                           sources.use = NULL, targets.use = NULL,
+                           comparison = c(1, 2), angle.x = 45)
+
+
+lr_all_data <- ggplot_build(lr_all)
+lr_all_data <- lr_all_data$plot$data
+
+hist(lr_all_data$pval)
+
+write.table(lr_all_data, "/home/hnatri/SPP1_mouse_scRNAseq/CARSPP1_vs_CAR_CellChat_LR_all_res.tsv",
+            quote = F, sep = "\t", row.names = F)
 
 ```
 

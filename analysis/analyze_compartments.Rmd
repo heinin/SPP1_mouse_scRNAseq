@@ -106,7 +106,7 @@ myeloid <- recluster_seurat(myeloid, vars_to_regress)
 
 ```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
 
-myeloid <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_myeloid.rds")
+myeloid <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_myeloid.rds")
 
 DimPlot(myeloid,
         group.by = "annot",
@@ -247,7 +247,7 @@ DimPlot(myeloid,
 
 seurat_data$myeloid_annot <- mapvalues(x = rownames(seurat_data@meta.data),
                                        from = rownames(myeloid@meta.data),
-                                       to = as.character(myeloid$annot))
+                                       to = as.character(myeloid$myeloid_annot))
 seurat_data@meta.data$myeloid_annot[-which(rownames(seurat_data@meta.data) %in% rownames(myeloid@meta.data))] <- NA
 
 seurat_data$annot_granular <- ifelse(!is.na(seurat_data$myeloid_annot),
@@ -300,7 +300,7 @@ lymphoid <- recluster_seurat(lymphoid, vars_to_regress)
 
 ```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
 
-lymphoid <- readRDS("/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_lymphoid.rds")
+lymphoid <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_lymphoid.rds")
 
 #DimPlot(lymphoid,
 #        group.by = "annot",
@@ -472,7 +472,7 @@ unique(seurat_data$annot_granular)
 #  coord_fixed(1)
 
 #saveRDS(lymphoid, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_lymphoid.rds")
-#saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
+saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_granular_annot.rds")
 
 # To build on command line, run Rscript -e "rmarkdown::render('/home/hnatri/SPP1_mouse_scRNAseq/analysis/analyze_compartments.Rmd')"
 # Then "mv *.html /home/hnatri/SPP1_mouse_scRNAseq/docs/"

@@ -32,50 +32,52 @@ source("/home/hnatri/SPP1_mouse_scRNAseq/code/CART_plot_functions.R")
 source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
 
 # Cluster annotations
-gs4_deauth()
-cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
-cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
+#gs4_deauth()
+#cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?us#p=sharing")
+#cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
 
 ```
 
 ## Import data
 
+Annotations were updated after subclustering and annotating myeloid and lymphoid cells.
+
 ```{r, message = F, warning = F, results = 'hide', fig.width = 6, fig.height = 6}
 
-seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_annotated.rds")
 
 # Updating annotations
-seurat_data$annot <- mapvalues(x = seurat_data$sub.cluster,
-                               from = cluster_annot$sub.cluster,
-                               to = cluster_annot$annot)
+#seurat_data$annot <- mapvalues(x = seurat_data$sub.cluster,
+#                               from = cluster_annot$sub.cluster,
+#                               to = cluster_annot$annot)
 
-#DimPlot(seurat_data,
-#        group.by = "annot",
-#        cols = carspp1_celltype_col,
-#        reduction = reduction,
-#        label = T,
-#        label.box = T,
-#        label.size = 3,
-#        repel = T,
-#        raster = T,
-#        raster.dpi = c(1024, 1024),
-#        pt.size = 3) +
-#  ggtitle("") +
-#  theme_classic() +
-#  NoLegend() +
-#  NoAxes() +
-#  coord_fixed(1)
+DimPlot(seurat_data,
+        group.by = "annot_granular",
+        #cols = carspp1_celltype_col,
+        reduction = reduction,
+        label = T,
+        label.box = T,
+        label.size = 3,
+        repel = T,
+        raster = T,
+        raster.dpi = c(1024, 1024),
+        pt.size = 3) +
+  ggtitle("") +
+  theme_classic() +
+  NoLegend() +
+  NoAxes() +
+  coord_fixed(1)
 
 seurat_data$Sample <- seurat_data$orig.ident
 seurat_data$Sample <- gsub("SPP1\\+CAR", "CAR_SPP1", seurat_data$Sample)
 seurat_data$Sample <- gsub("TUMOR", "CTRL", seurat_data$Sample)
 
 # Celltype colors
-carspp1_celltype_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(unique(seurat_data$annot)))
-names(carspp1_celltype_col) <- sort(unique(seurat_data$annot))
+carspp1_celltype_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(unique(seurat_data$annot_granular)))
+names(carspp1_celltype_col) <- sort(unique(seurat_data$annot_granular))
 
 DimPlot(seurat_data,
-        group.by = "annot",
+        group.by = "annot_granular",
         reduction = "integratedSCTumap",
         cols = carspp1_celltype_col,
         label = T,
@@ -91,7 +93,7 @@ UMAPs of cell types by group
 ```{r, message = F, warning = F, fig.width = 10, fig.height = 4, results = 'hide'}
 
 DimPlot(seurat_data,
-        group.by = "annot",
+        group.by = "annot_granular",
         split.by = "Sample",
         reduction = "integratedSCTumap",
         cols = carspp1_celltype_col) +
@@ -108,8 +110,8 @@ DimPlot(seurat_data,
 
 create_barplot(seurat_data,
                group_var = "Sample",
-               plot_var = "annot",
-               plot_levels = sort((unique(seurat_data$annot))),
+               plot_var = "annot_granular",
+               plot_levels = sort((unique(seurat_data$annot_granular))),
                group_levels = c("CTRL", "SPP1", "CAR", "CAR_SPP1"),
                plot_colors = carspp1_celltype_col,
                var_names =  c("Frequency (%)", ""),
@@ -127,7 +129,7 @@ prop_test <- sc_utils(seurat_data)
 
 # CAR vs. CTRL
 prop_test <- permutation_test(
-  prop_test, cluster_identity = "annot",
+  prop_test, cluster_identity = "annot_granular",
   sample_2 = "CAR", sample_1 = "TUMOR",
   sample_identity = "orig.ident")
 
@@ -137,7 +139,7 @@ perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + g
 
 # SPP1 vs. CTRL
 prop_test <- permutation_test(
-  prop_test, cluster_identity = "annot",
+  prop_test, cluster_identity = "annot_granular",
   sample_2 = "SPP1", sample_1 = "TUMOR",
   sample_identity = "orig.ident")
 
@@ -147,7 +149,7 @@ perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + g
 
 # CAR+SPP1 vs. CTRL
 prop_test <- permutation_test(
-  prop_test, cluster_identity = "annot",
+  prop_test, cluster_identity = "annot_granular",
   sample_2 = "SPP1+CAR", sample_1 = "TUMOR",
   sample_identity = "orig.ident")
 
@@ -157,7 +159,7 @@ perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + g
 
 # CAR+SPP1 vs. CAR
 prop_test <- permutation_test(
-  prop_test, cluster_identity = "annot",
+  prop_test, cluster_identity = "annot_granular",
   sample_2 = "SPP1+CAR", sample_1 = "CAR",
   sample_identity = "orig.ident")
 
@@ -167,7 +169,7 @@ perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + g
 
 # CAR+SPP1 vs. SPP1
 prop_test <- permutation_test(
-  prop_test, cluster_identity = "annot",
+  prop_test, cluster_identity = "annot_granular",
   sample_2 = "SPP1+CAR", sample_1 = "SPP1",
   sample_identity = "orig.ident")
 
