@@ -506,4 +506,73 @@ for (i in 1:length(CC_objects_compare)) {
 
 ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, "cm"))
 
+# ADGRE, ICAM, JAM and SEMA4
+pathways.show <- c("ADGRE")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$celltype <- factor(CC_objects_compare[[i]]@meta$celltype,
+                                                  levels = celltypes)
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                         levels = celltypes)
+
+  ht[[i]] <- netVisual_heatmap(CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = "Reds",
+                               title.name = paste(pathways.show, "signaling ", names(CC_objects_compare)[i]))
+}
+
+ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, "cm"))
+
+pathways.show <- c("ICAM")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$celltype <- factor(CC_objects_compare[[i]]@meta$celltype,
+                                                  levels = celltypes)
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                         levels = celltypes)
+
+  ht[[i]] <- netVisual_heatmap(CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = "Reds",
+                               title.name = paste(pathways.show, "signaling ", names(CC_objects_compare)[i]))
+}
+
+ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, "cm"))
+
+pathways.show <- c("JAM")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$celltype <- factor(CC_objects_compare[[i]]@meta$celltype,
+                                                  levels = celltypes)
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                         levels = celltypes)
+
+  ht[[i]] <- netVisual_heatmap(CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = "Reds",
+                               title.name = paste(pathways.show, "signaling ", names(CC_objects_compare)[i]))
+}
+
+ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, "cm"))
+
+pathways.show <- c("SEMA4")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list()
+for (i in 1:length(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$celltype <- factor(CC_objects_compare[[i]]@meta$celltype,
+                                                  levels = celltypes)
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                         levels = celltypes)
+
+  ht[[i]] <- netVisual_heatmap(CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = "Reds",
+                               title.name = paste(pathways.show, "signaling ", names(CC_objects_compare)[i]))
+}
+
+ComplexHeatmap::draw(ht[[1]] + ht[[2]], ht_gap = unit(0.5, "cm"))
+
 ```
