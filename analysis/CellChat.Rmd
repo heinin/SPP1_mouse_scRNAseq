@@ -446,8 +446,7 @@ par(mfrow = c(1, 2), xpd=TRUE)
 CC_merged_object@meta$Sample = factor(CC_merged_object@meta$Sample, levels = c("CART_SPP1", "CART")) # set factor level
 plotGeneExpression(CC_merged_object,
                    signaling = "SPP1",
-                   split.by = "Sample",
-                   colors.ggplot = T)
+                   split.by = "Sample")
 #color.use = c("red", "blue"))
 
 DefaultAssay(seurat_object) <- "RNA"
@@ -464,7 +463,8 @@ VlnPlot(seurat_object,
         ncol = 1) &
   theme_bw() &
   RotatedAxis() &
-  xlab("")
+  xlab("") &
+  RotatedAxis() 
 
 VlnPlot(seurat_object,
         features = plot_features,
@@ -474,7 +474,8 @@ VlnPlot(seurat_object,
         ncol = 1) &
   theme_bw() &
   RotatedAxis() &
-  xlab("")
+  xlab("") &
+  RotatedAxis()
 
 VlnPlot(seurat_object,
         features = plot_features,
@@ -486,8 +487,309 @@ VlnPlot(seurat_object,
         cols = c("aquamarine3", "deeppink3")) &
   theme_bw() &
   xlab("") &
-  ylab("Log-normalized expression")
+  ylab("Log-normalized expression") &
+  RotatedAxis()
   #NoLegend()
 
 
 ```
+
+## Delta signaling heatmaps
+
+### SPP1
+
+NAs in each signaling matrix due to lack of signaling
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("SPP1")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling ", names(CC_objects_compare)[i]))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#4287F5FF", "#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(-0.1, 0, 0.1, 0.2, 0.3)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+#filename <- "CellChat_SPP1_delta_heatmap.pdf"
+#pdf(file = filename,
+#    width = 4,
+#    height = 3.5)
+#
+#ComplexHeatmap::draw(delta_ht)
+#
+#dev.off()
+
+```
+
+### MHC-I
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("MHC-I")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling ", names(CC_objects_compare)[i]))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#4287F5FF", "#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.2, 0.4, 0.6, 0.8)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+
+### MHC-II
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("MHC-II")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling ", names(CC_objects_compare)[i]))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.5, 1.0, 1.5)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+
+## Heatmaps with NA = 0
+
+### SPP1
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+CC_objects_compare <- readRDS("/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_compare_p1.rsd")
+
+# Delta heatmap
+pathways.show <- c("SPP1")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling"))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+
+ht[[2]]@matrix[is.na(ht[[2]]@matrix)] <- 0
+ht[[1]]@matrix[is.na(ht[[1]]@matrix)] <- 0
+
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.1, 0.2, 0.3)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+
+### MHC-I
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("MHC-I")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling"))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+
+ht[[2]]@matrix[is.na(ht[[2]]@matrix)] <- 0
+ht[[1]]@matrix[is.na(ht[[1]]@matrix)] <- 0
+
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.5, 1.0, 1.5)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+
+### MHC-II
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("MHC-II")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling"))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+
+ht[[2]]@matrix[is.na(ht[[2]]@matrix)] <- 0
+ht[[1]]@matrix[is.na(ht[[1]]@matrix)] <- 0
+
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.5, 1.0, 1.5)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+

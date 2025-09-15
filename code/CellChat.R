@@ -173,10 +173,12 @@ CC_objects <- lapply(CC_objects, function(xx){
   # Infer the cell-cell communication at a signaling pathway level
   unique(xx@idents)
   
-  xx <- computeCommunProbPathway(xx)
+  xx <- computeCommunProbPathway(xx,
+                                 thresh = 1)
   
   # Calculate the aggregated cell-cell communication network
-  xx <- aggregateNet(xx)
+  xx <- aggregateNet(xx,
+                     thresh = 1)
   
   xx
 })
@@ -185,6 +187,6 @@ CC_objects <- lapply(CC_objects, function(xx){
 CC_objects_compare <- CC_objects[c("CART_SPP1_CC", "CART_CC")]
 CC_merged_object <- mergeCellChat(CC_objects_compare, add.names = names(CC_objects_compare))
 
-saveRDS(CC_objects_compare, "/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_compare.rsd")
-saveRDS(CC_merged_object, "/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_merged.rds")
+saveRDS(CC_objects_compare, "/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_compare_p1.rsd")
+saveRDS(CC_merged_object, "/scratch/hnatri/CART/CART_SPP1_Kluc_Cellchat_merged_p1.rds")
 

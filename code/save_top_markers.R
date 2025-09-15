@@ -30,10 +30,11 @@ markers <- presto::wilcoxauc(seurat_object,
                              seurat_assay = "RNA_human")
 
 output_cluster_markers <- markers %>%
+  filter(auc > 0.6) %>%
   arrange(dplyr::desc(logFC)) %>%
   group_by(group) %>%
-  dplyr::slice(1:30)
+  dplyr::slice(1:50)
 
-write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/annot_granular_top30_markers.tsv",
+write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/annot_granular_top50_markers.tsv",
             quote = F, row.names = F, sep = "\t")
 
