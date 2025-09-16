@@ -836,6 +836,153 @@ ComplexHeatmap::draw(delta_ht)
 
 ```
 
+### ADGRE
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("ADGRE")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling"))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+
+ht[[2]]@matrix[is.na(ht[[2]]@matrix)] <- 0
+ht[[1]]@matrix[is.na(ht[[1]]@matrix)] <- 0
+
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.5, 1.0, 1.5)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+
+### ICAM
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("ICAM")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling"))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+
+ht[[2]]@matrix[is.na(ht[[2]]@matrix)] <- 0
+ht[[1]]@matrix[is.na(ht[[1]]@matrix)] <- 0
+
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.5, 1.0, 1.5)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+
+### JAM
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
+
+# Delta heatmap
+pathways.show <- c("JAM")
+par(mfrow = c(1,2), xpd=TRUE)
+ht <- list("CART_SPP1_CC" = NULL,
+           "CART_CC" = NULL)
+for (i in names(CC_objects_compare)) {
+  CC_objects_compare[[i]]@meta$annot_granular <- factor(CC_objects_compare[[i]]@meta$annot_granular,
+                                                  levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  CC_objects_compare[[i]]@idents <- factor(CC_objects_compare[[i]]@idents,
+                                           levels = sort(unique(CC_objects_compare[[i]]@meta$annot_granular)))
+  
+  ht[[i]] <- netVisual_heatmap(object = CC_objects_compare[[i]],
+                               signaling = pathways.show,
+                               color.heatmap = c('#ffffff','#b2182b'),
+                               measure = "count",
+                               slot.name = "netP",
+                               #remove.isolate = T,
+                               #cluster.rows = T,
+                               #cluster.cols = T,
+                               title.name = paste(pathways.show, "signaling"))
+                               #color.use = immune_fibro_celltype_col)
+}
+
+
+delta_ht <- ht[[2]]
+
+ht[[2]]@matrix[is.na(ht[[2]]@matrix)] <- 0
+ht[[1]]@matrix[is.na(ht[[1]]@matrix)] <- 0
+
+delta_ht@matrix <- ht[[2]]@matrix - ht[[1]]@matrix
+
+delta_ht@matrix_color_mapping
+
+mx_cols <- c("#ffffff", "#A84E76FF", "#B12A3DFF", "#B2182BFF")
+mx_breaks <- c(0, 0.5, 1.0, 1.5)
+col_fun = colorRamp2(mx_breaks, mx_cols)
+
+delta_ht@matrix_color_mapping <- ComplexHeatmap::ColorMapping(col_fun = col_fun,
+                                                              breaks = mx_breaks,
+                                                              na_col = "#e6e7e8")
+
+ComplexHeatmap::draw(delta_ht)
+
+```
+
 ### CD80 / CD28
 
 ```{r, message = F, warning = F, fig.width = 6, fig.height = 5}
