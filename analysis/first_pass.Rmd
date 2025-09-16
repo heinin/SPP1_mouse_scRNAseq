@@ -152,6 +152,8 @@ DefaultAssay(seurat_data) <- "RNA"
 seurat_data <- JoinLayers(seurat_data)
 seurat_list <- SplitObject(seurat_data, split.by = "orig.ident")
 
+# Unable to run SoupX: no raw data files
+
 # Calling doublets
 seurat_list <- run_sctransform(seurat_list)
 seurat_list <- run_doubletfinder(sample_seurat_list = seurat_list)
