@@ -7,7 +7,7 @@
 #SBATCH -n 1
 #SBATCH -N 1
 #SBATCH --cpus-per-task=16
-#SBATCH --mem=300G
+#SBATCH --mem=600G
 ##SBATCH --part=hmem
 #SBATCH -t 5-0:00:00
 
@@ -101,6 +101,6 @@ fi
 
 module load singularity;
 
-RSTUDIO_PASSWORD=$PASSWORD singularity exec -B /tgen_labs,/opt,$RSTMP:/tmp,$RSLIB:/var/lib/rstudio-server/,$RSRUN:/var/run/rstudio-server/,${RPRIHOME}/.Renviron:$HOME/.Renviron,${RPRIHOME}/.rstudio:$HOME/.rstudio,${RPRIHOME}/.config:$HOME/.config $SIMG_IMAGE R CMD BATCH CellChat.R
+RSTUDIO_PASSWORD=$PASSWORD singularity exec -B /tgen_labs,/opt,$RSTMP:/tmp,$RSLIB:/var/lib/rstudio-server/,$RSRUN:/var/run/rstudio-server/,${RPRIHOME}/.Renviron:$HOME/.Renviron,${RPRIHOME}/.rstudio:$HOME/.rstudio,${RPRIHOME}/.config:$HOME/.config $SIMG_IMAGE R CMD BATCH escape_GSEA.R
 
 

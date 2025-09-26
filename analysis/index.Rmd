@@ -14,6 +14,7 @@ Project directory in [Google Drive](https://drive.google.com/drive/folders/1tP_g
 
 1. [First-pass annotation](first_pass.html)\
 2. [Analyzing compartments](analyze_compartments.html)\
+2.2 [Updating annotations after refiltering](update_annotations.html)\
 3. [Comparative analysis](comparative_analysis.html)\
 4. [Lymphoid markers](lymphoid_myeloid_markers.html)\
 5. [CellChat](CellChat.html)\

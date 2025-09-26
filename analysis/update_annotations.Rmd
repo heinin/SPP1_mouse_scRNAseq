@@ -1,0 +1,289 @@
+---
+title: "Plot annotations after reclustering"
+author: "heinin"
+date: "2025-09-23"
+output:
+  workflowr::wflow_html:
+    code_folding: hide
+  html_notebook: default
+editor_options:
+  chunk_output_type: console
+---
+
+### Libraries and environment variables
+
+```{r, message = F, warning = F, results = 'hide'}
+
+library(workflowr)
+library(Seurat)
+library(googlesheets4)
+library(tidyverse)
+library(plyr)
+library(ggrepel)
+library(patchwork)
+
+setwd("/home/hnatri/SPP1_mouse_scRNAseq/")
+set.seed(1234)
+options(future.globals.maxSize = 30000 * 1024^2)
+reduction <- "integratedSCTumap"
+
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/CART_plot_functions.R")
+source("/home/hnatri/SPP1_mouse_scRNAseq/code/colors_themes.R")
+source("/home/hnatri/SingleCellBestPractices/scripts/preprocessing_qc_module.R")
+source("/home/hnatri/SingleCellBestPractices/scripts/integration_module.R")
+
+# Cluster annotations
+gs4_deauth()
+cluster_annot  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
+cluster_annot <- read_sheet(cluster_annot, sheet = "Cluster annotation")
+
+```
+
+### Helper functions
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+
+recluster_seurat <- function(seurat_object, vars_to_regress){
+  
+  DefaultAssay(seurat_object) <- "RNA"
+  seurat_object <- SCTransform(seurat_object, vars.to.regress = vars_to_regress)
+  seurat_object <- RunPCA(seurat_object,
+                          reduction.name = "pca",
+                          verbose = F)
+  pcs <- get_pcs(seurat_object, reduction_name = "pca")
+  message(pcs)
+  seurat_object <- RunUMAP(seurat_object,
+                           reduction = "pca",
+                           reduction.name = "umap",
+                           dims = 1:min(pcs),
+                           return.model = TRUE)
+  seurat_object <- FindNeighbors(seurat_object,
+                                 reduction = "pca",
+                                 dims = 1:min(pcs),
+                                 graph.name = c("nn",
+                                                "snn"))
+  seurat_object <- FindClusters(seurat_object,
+                                resolution = c(0.1,0.2,0.3,0.5,0.8,1),
+                                graph.name = "snn")
+  
+  return(seurat_object)
+}
+
+```
+
+### Import data
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = T}
+
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia.rds")
+
+old_seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_granular_annot.rds")
+
+length(setdiff(colnames(old_seurat_data), colnames(seurat_data)))
+length(setdiff(colnames(seurat_data), colnames(old_seurat_data)))
+length(intersect(colnames(old_seurat_data), colnames(seurat_data)))
+
+unique(old_seurat_data$DF.class_col)
+unique(old_seurat_data$doublet_finder)
+
+seurat_data@meta.data[rownames(seurat_data@meta.data) %in% setdiff(colnames(seurat_data), colnames(old_seurat_data)),]
+
+old_seurat_annot <- old_seurat_data@meta.data[,c("orig.ident", "annot_granular")]
+rm(old_seurat_data)
+rm(seurat_data)
+
+```
+
+### Reconstructing the UMAP and reclustering
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = F}
+
+vars_to_regress <- c("G2M.Score",
+                     "S.Score",
+                     "nCount_RNA",
+                     "nFeature_RNA",
+                     "percent.mt")
+
+seurat_data <- recluster_seurat(seurat_data, vars_to_regress = vars_to_regress)
+
+#saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered.rds")
+
+```
+
+### Add old annotations
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered.rds")
+
+seurat_data$annot_granular <- mapvalues(colnames(seurat_data),
+                                        from = rownames(old_seurat_annot),
+                                        to = old_seurat_annot$annot_granular)
+
+seurat_data$annot_granular <- ifelse(colnames(seurat_data) %in% rownames(old_seurat_annot), seurat_data$annot_granular, NA)
+
+```
+
+### Plotting
+
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+
+DimPlot(seurat_data,
+        group.by = "snn_res.0.8",
+        reduction = "umap",
+        label = T) +
+  coord_fixed() +
+  theme_classic() +
+  NoLegend()
+
+DimPlot(seurat_data,
+        group.by = "annot_granular",
+        reduction = "umap",
+        label = T) +
+  coord_fixed() +
+  theme_classic() +
+  NoLegend()
+
+table(seurat_data$snn_res.0.8, seurat_data$annot_granular)
+
+```
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 4, results = 'hide'}
+
+# Annotation colors
+annots_granular <- sort(unique(seurat_data$annot_granular))
+annots_granular_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(annots_granular))
+names(annots_granular_col) <- annots_granular
+
+create_barplot(seurat_data,
+               group_var = "snn_res.0.8",
+               plot_var = "annot_granular",
+               plot_levels = sort(unique(seurat_data$annot_granular)),
+               group_levels = sort(unique(seurat_data$snn_res.0.8)),
+               plot_colors = annots_granular_col,
+               var_names =  c("Frequency", ""),
+               legend_title = "")
+
+# Cluster colors
+snn_res.0.8_clusters <- as.factor(c(0, seq(1:33)))
+snn_res.0.8_cluster_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(snn_res.0.8_clusters))
+names(snn_res.0.8_cluster_col) <- levels(snn_res.0.8_clusters)
+
+create_barplot(seurat_data,
+               group_var = "annot_granular",
+               plot_var = "snn_res.0.8",
+               plot_levels = levels(seurat_data$snn_res.0.8),
+               group_levels = sort(unique(seurat_data$annot_granular)),
+               plot_colors = snn_res.0.8_cluster_col,
+               var_names =  c("Frequency", ""),
+               legend_title = "")
+
+```
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 4, results = 'hide'}
+
+qc_features <- c("nCount_RNA", "nFeature_RNA", "percent.mt")
+
+FeaturePlot(seurat_data,
+            #layer = "RNA",
+            #slot = "data",
+            features = qc_features,
+            order = T,
+            ncol = 3,
+            reduction = "umap",
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_classic()
+
+```
+
+```{r, message = F, warning = F, fig.width = 6, fig.height = 5, results = 'hide'}
+
+DimPlot(seurat_data,
+        group.by = "Phase",
+        reduction = "umap",) +
+  coord_fixed() +
+  theme_classic()
+
+```
+
+### Human markers
+
+```{r, message = F, warning = F, fig.width = 20, fig.height = 40, results = 'hide'}
+
+plot_features <- c("PTMA", "PFN1", "CFL1", "TMSB4X", "TPT1", "TMSB10", "MIF",
+                   "PDPN", "NLRP3", "IL1B", "CCL4", "S100A8", "S100A9",
+                   "S100A10", "TYROBP", "CD68", "ICAM1", "C1QA", "C1QB", "C1QC",
+                   "CD74", "AREG", "CD4", "APOE", "FABP5", "SPP1", "CD274",
+                   "CD96", "PTPRC", "CEMIP2", "KLRD1", "CD8A", "NKG7", "IL32",
+                   "CD3D", "BTG1", "IFITM2", "ITM2A", "SELL", "GZMB", "CD79A",
+                   "ACTA2", "PDGFRB", "COL1A1", "CD163", "MRC1", "ITGAM", "CD14",
+                   "CD279", "PDCD1", "TREM2", "TMEM119", "P2RY12", "CX3CR1")
+
+DefaultAssay(seurat_data) <- "RNA_human"
+FeaturePlot(seurat_data,
+            #assay = "RNA_human",
+            slot = "data",
+            features = plot_features,
+            order = T,
+            ncol = 5,
+            reduction = "umap",
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
+### Mouse microglia modules
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 4, results = 'hide'}
+
+FeaturePlot(seurat_data,
+            features = c("DAM", "Homeostatic"),
+            order = T,
+            ncol = 2,
+            reduction = "umap",
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
+### Top markers for new clusters
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 12, fig.height = 16}
+
+markers <- presto::wilcoxauc(seurat_data,
+                             group_by = "snn_res.0.8",
+                             assay = "data",
+                             seurat_assay = "RNA_human")
+
+top_features <- markers %>%  group_by(group) %>% slice_max(order_by = auc, n = 5)
+
+DefaultAssay(seurat_data) <- "RNA_human"
+create_dotplot_heatmap(seurat_object = seurat_data,
+                       plot_features = unique(top_features$feature),
+                       group_var = "snn_res.0.8",
+                       group_colors = snn_res.0.8_cluster_col,
+                       column_title = "",
+                       row_km = 5,
+                       col_km = 5,
+                       row.order = NULL,
+                       col.order = NULL)
+
+output_cluster_markers <- markers %>%
+  arrange(dplyr::desc(logFC)) %>%
+  group_by(group) %>%
+  dplyr::slice(1:50)
+
+write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/updated_cluster_markers_top50.tsv",
+            quote = F, row.names = F, sep = "\t")
+
+
+```
+

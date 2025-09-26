@@ -107,7 +107,9 @@ abline(v = 10, h = 500,
 
 ### Clustering and UMAP construction
 
-```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide', eval = F}
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide', eval = T}
+
+seurat_data <- subset(seurat_data, subset = nFeature_RNA > 500 & nCount_RNA > 1000)
 
 # Normalizing and scaling
 seurat_data <- SCTransform(seurat_data,
@@ -155,8 +157,9 @@ seurat_list <- SplitObject(seurat_data, split.by = "orig.ident")
 # Unable to run SoupX: no raw data files
 
 # Calling doublets
-seurat_list <- run_sctransform(seurat_list)
-seurat_list <- run_doubletfinder(sample_seurat_list = seurat_list)
+seurat_list <- run_sctransform(seurat_list, vars_to_regress = vars_to_regress)
+seurat_list <- run_doubletfinder(sample_seurat_list = seurat_list,
+                                 manual_dbr = 0.15)
 
 # Removing doublets
 seurat_list <- lapply(seurat_list, function(xx){
@@ -169,7 +172,7 @@ seurat_list <- run_sctransform(seurat_list,
 integrated_data <- sct_rpca_integration(seurat_list,
                                         ndims = 8)
 
-#saveRDS(integrated_data, "/scratch/hnatri/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+saveRDS(integrated_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds")
 
 ```
 
@@ -177,9 +180,17 @@ integrated_data <- sct_rpca_integration(seurat_list,
 
 ```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
 
-integrated_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+# range(integrated_data$nCount_RNA)
+# 500 122405
+# range(integrated_data$nFeature_RNA)
+# 217 8992
+
+integrated_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds")
 integrated_data$cluster <- integrated_data$integratedSCTsnn_res.0.3
 table(integrated_data$cluster)
+
+range(integrated_data$nCount_RNA)
+range(integrated_data$nFeature_RNA)
 
 DimPlot(integrated_data,
         group.by = "cluster",
@@ -234,7 +245,7 @@ DimPlot(integrated_data,
 
 ```
 
-```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide', eval = F}
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide', eval = T}
 
 DimPlot(integrated_data,
         group.by = "cluster",
@@ -259,7 +270,7 @@ DimPlot(integrated_data,
 
 ### Marker expression and cell type annotation
 
-```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide', eval = F}
+```{r, message = F, warning = F, fig.width = 8, fig.height = 8, results = 'hide', eval = T}
 
 # Converting mouse gene names to human
 mouse_human_genes <- read.csv("http://www.informatics.jax.org/downloads/reports/HOM_MouseHumanSequence.rpt", sep="\t")
@@ -319,7 +330,7 @@ integrated_data[["RNA_human"]] <- CreateAssayObject(assay_data,
 DefaultAssay(integrated_data) <- "RNA_human"
 integrated_data <- NormalizeData(integrated_data)
 
-#saveRDS(integrated_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+saveRDS(integrated_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds")
 
 ```
 
@@ -413,7 +424,7 @@ markers_sig <- markers %>%
   filter(padj < 0.01,
          abs(logFC) > 1)
 
-write.table(markers_sig, "/home/hnatri/SPP1_mouse_scRNAseq/cluster_sig_top_markers.tsv", quote = F, row.names = F, sep = "\t")
+write.table(markers_sig, "/home/hnatri/SPP1_mouse_scRNAseq/cluster_sig_top_markers_nCount1k_nFeat500_dblrate15.tsv", quote = F, row.names = F, sep = "\t")
 
 plot_features <- markers %>%  group_by(group) %>% slice_max(order_by = auc, n = 5)
 
@@ -597,5 +608,8 @@ prop_test <- permutation_test(
 perm_plot <- permutation_plot(prop_test)
 
 perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + ggtitle("SPP1+CAR vs. SPP1")
+
+# To build on command line, run Rscript -e "rmarkdown::render('first_pass.Rmd')"
+# Then "mv *.html /home/hnatri/SPP1_mouse_scRNAseq/docs/"
 
 ```
