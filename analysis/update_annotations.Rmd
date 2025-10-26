@@ -73,7 +73,7 @@ recluster_seurat <- function(seurat_object, vars_to_regress){
 
 ### Import data
 
-```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = T}
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = F}
 
 seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia.rds")
 
@@ -112,9 +112,9 @@ seurat_data <- recluster_seurat(seurat_data, vars_to_regress = vars_to_regress)
 
 ### Add old annotations
 
-```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = F}
 
-seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered_refAnnot.rds")
 
 seurat_data$annot_granular <- mapvalues(colnames(seurat_data),
                                         from = rownames(old_seurat_annot),
@@ -122,11 +122,15 @@ seurat_data$annot_granular <- mapvalues(colnames(seurat_data),
 
 seurat_data$annot_granular <- ifelse(colnames(seurat_data) %in% rownames(old_seurat_annot), seurat_data$annot_granular, NA)
 
+#saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered_refAnnot.rds")
+
 ```
 
 ### Plotting
 
-```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 8, fig.height = 6, results = 'hide'}
+
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered_refAnnot.rds")
 
 DimPlot(seurat_data,
         group.by = "snn_res.0.8",
@@ -136,19 +140,42 @@ DimPlot(seurat_data,
   theme_classic() +
   NoLegend()
 
+```
+
+```{r, message = F, warning = F, fig.width = 9, fig.height = 7, results = 'hide'}
+
 DimPlot(seurat_data,
         group.by = "annot_granular",
         reduction = "umap",
         label = T) +
   coord_fixed() +
-  theme_classic() +
-  NoLegend()
+  theme_classic()
+
+DimPlot(seurat_data,
+        group.by = "predicted.id",
+        reduction = "umap",
+        label = T) +
+  coord_fixed() +
+  theme_classic()
 
 table(seurat_data$snn_res.0.8, seurat_data$annot_granular)
+table(seurat_data$snn_res.0.8, seurat_data$predicted.id)
+table(seurat_data$annot_granular, seurat_data$predicted.id)
 
 ```
 
-```{r, message = F, warning = F, fig.width = 8, fig.height = 4, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 9, fig.height = 7, results = 'hide'}
+
+DimPlot(seurat_data,
+        group.by = "Phase",
+        reduction = "umap",
+        label = T) +
+  coord_fixed() +
+  theme_classic()
+
+```
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 4, results = 'hide'}
 
 # Annotation colors
 annots_granular <- sort(unique(seurat_data$annot_granular))
@@ -164,6 +191,10 @@ create_barplot(seurat_data,
                var_names =  c("Frequency", ""),
                legend_title = "")
 
+```
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 4, results = 'hide'}
+
 # Cluster colors
 snn_res.0.8_clusters <- as.factor(c(0, seq(1:33)))
 snn_res.0.8_cluster_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(snn_res.0.8_clusters))
@@ -174,6 +205,63 @@ create_barplot(seurat_data,
                plot_var = "snn_res.0.8",
                plot_levels = levels(seurat_data$snn_res.0.8),
                group_levels = sort(unique(seurat_data$annot_granular)),
+               plot_colors = snn_res.0.8_cluster_col,
+               var_names =  c("Frequency", ""),
+               legend_title = "")
+
+```
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 5, results = 'hide'}
+
+# Reference-based annotation colors
+ref_annot_clusters <- sort(unique(seurat_data$predicted.id))
+ref_annot_cluster_col <- colorRampPalette(brewer.pal(10, "Paired"))(nb.cols <- length(ref_annot_clusters))
+names(ref_annot_cluster_col) <- levels(ref_annot_clusters)
+
+create_barplot(seurat_data,
+               group_var = "annot_granular",
+               plot_var = "predicted.id",
+               plot_levels = levels(seurat_data$predicted.id),
+               group_levels = sort(unique(seurat_data$annot_granular)),
+               plot_colors = ref_annot_cluster_col,
+               var_names =  c("Frequency", ""),
+               legend_title = "")
+
+```
+
+```{r, message = F, warning = F, fig.width = 10, fig.height = 6, results = 'hide'}
+
+create_barplot(seurat_data,
+               group_var = "predicted.id",
+               plot_var = "annot_granular",
+               plot_levels = levels(seurat_data$annot_granular),
+               group_levels = sort(unique(seurat_data$predicted.id)),
+               plot_colors = annots_granular_col,
+               var_names =  c("Frequency", ""),
+               legend_title = "")
+
+```
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 5, results = 'hide'}
+
+create_barplot(seurat_data,
+               group_var = "snn_res.0.8",
+               plot_var = "predicted.id",
+               plot_levels = levels(seurat_data$predicted.id),
+               group_levels = sort(unique(seurat_data$snn_res.0.8)),
+               plot_colors = ref_annot_cluster_col,
+               var_names =  c("Frequency", ""),
+               legend_title = "")
+
+```
+
+```{r, message = F, warning = F, fig.width = 8, fig.height = 6, results = 'hide'}
+
+create_barplot(seurat_data,
+               group_var = "predicted.id",
+               plot_var = "snn_res.0.8",
+               plot_levels = levels(seurat_data$snn_res.0.8),
+               group_levels = sort(unique(seurat_data$predicted.id)),
                plot_colors = snn_res.0.8_cluster_col,
                var_names =  c("Frequency", ""),
                legend_title = "")
@@ -194,16 +282,6 @@ FeaturePlot(seurat_data,
             raster = T,
             cols = c("gray89", "tomato3")) &
   coord_fixed(ratio = 1) &
-  theme_classic()
-
-```
-
-```{r, message = F, warning = F, fig.width = 6, fig.height = 5, results = 'hide'}
-
-DimPlot(seurat_data,
-        group.by = "Phase",
-        reduction = "umap",) +
-  coord_fixed() +
   theme_classic()
 
 ```
@@ -284,6 +362,27 @@ output_cluster_markers <- markers %>%
 write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/updated_cluster_markers_top50.tsv",
             quote = F, row.names = F, sep = "\t")
 
+```
+
+### Removing problem clusters
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 12, fig.height = 16}
+
+
+
 
 ```
+
+### Updating annotations
+
+```{r, message = F, warning = F, results = 'hide', fig.width = 12, fig.height = 16}
+
+
+
+# To build on command line, run Rscript -e "rmarkdown::render('update_annotations.Rmd')"
+# Then "mv *.html /home/hnatri/SPP1_mouse_scRNAseq/docs/"
+
+```
+
+
 

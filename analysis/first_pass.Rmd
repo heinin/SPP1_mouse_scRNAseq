@@ -532,7 +532,7 @@ DimPlot(integrated_data,
   NoAxes() +
   coord_fixed(1)
 
-#saveRDS(integrated_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8.rds")
+#saveRDS(integrated_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds")
 
 ```
 
