@@ -75,7 +75,7 @@ recluster_seurat <- function(seurat_object, vars_to_regress){
 
 ```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = F}
 
-seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15_scGSEAmodules.rds")
 
 old_seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_granular_annot.rds")
 
@@ -114,7 +114,7 @@ seurat_data <- recluster_seurat(seurat_data, vars_to_regress = vars_to_regress)
 
 ```{r, message = F, warning = F, fig.width = 5, fig.height = 5, results = 'hide', eval = F}
 
-seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered_refAnnot.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15_scGSEAmodules.rds")
 
 seurat_data$annot_granular <- mapvalues(colnames(seurat_data),
                                         from = rownames(old_seurat_annot),
@@ -122,7 +122,7 @@ seurat_data$annot_granular <- mapvalues(colnames(seurat_data),
 
 seurat_data$annot_granular <- ifelse(colnames(seurat_data) %in% rownames(old_seurat_annot), seurat_data$annot_granular, NA)
 
-#saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered_refAnnot.rds")
+#saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15_scGSEAmodules_reclustered_refAnnot.rds")
 
 ```
 
@@ -130,7 +130,7 @@ seurat_data$annot_granular <- ifelse(colnames(seurat_data) %in% rownames(old_seu
 
 ```{r, message = F, warning = F, fig.width = 8, fig.height = 6, results = 'hide'}
 
-seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia_reclustered_refAnnot.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15_scGSEAmodules_reclustered_refAnnot.rds")
 
 DimPlot(seurat_data,
         group.by = "snn_res.0.8",
@@ -288,7 +288,7 @@ FeaturePlot(seurat_data,
 
 ### Human markers
 
-```{r, message = F, warning = F, fig.width = 20, fig.height = 40, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 20, fig.height = 42, results = 'hide'}
 
 plot_features <- c("PTMA", "PFN1", "CFL1", "TMSB4X", "TPT1", "TMSB10", "MIF",
                    "PDPN", "NLRP3", "IL1B", "CCL4", "S100A8", "S100A9",
@@ -315,14 +315,37 @@ FeaturePlot(seurat_data,
 
 ```
 
-### Mouse microglia modules
+### Mouse expression modules
 
-```{r, message = F, warning = F, fig.width = 8, fig.height = 4, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 12, fig.height = 8, results = 'hide'}
 
 FeaturePlot(seurat_data,
-            features = c("DAM", "Homeostatic"),
+            features = c("DAM", "Homeostatic", "MHC_I_machinery", "MHC_II_machinery", "Costimulation_APCB", "Adhesion_immunesynapse"),
             order = T,
-            ncol = 2,
+            ncol = 3,
+            reduction = "umap",
+            raster = T,
+            cols = c("gray89", "tomato3")) &
+  coord_fixed(ratio = 1) &
+  theme_bw() &
+  NoLegend()
+
+```
+
+### Expression of each mouse module gene
+
+```{r, message = F, warning = F, fig.width = 20, fig.height = 36, results = 'hide'}
+
+# Gene sets
+gs4_deauth()
+genesets  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
+genesets <- read_sheet(genesets, sheet = "Myeloid modules")
+
+DefaultAssay(seurat_data) <- "RNA"
+FeaturePlot(seurat_data,
+            features = unique(genesets$gene),
+            order = T,
+            ncol = 5,
             reduction = "umap",
             raster = T,
             cols = c("gray89", "tomato3")) &
@@ -359,8 +382,8 @@ output_cluster_markers <- markers %>%
   group_by(group) %>%
   dplyr::slice(1:50)
 
-write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/updated_cluster_markers_top50.tsv",
-            quote = F, row.names = F, sep = "\t")
+#write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/updated_cluster_markers_top50.tsv",
+#            quote = F, row.names = F, sep = "\t")
 
 ```
 
@@ -376,8 +399,6 @@ write.table(output_cluster_markers, "/home/hnatri/SPP1_mouse_scRNAseq/updated_cl
 ### Updating annotations
 
 ```{r, message = F, warning = F, results = 'hide', fig.width = 12, fig.height = 16}
-
-
 
 # To build on command line, run Rscript -e "rmarkdown::render('update_annotations.Rmd')"
 # Then "mv *.html /home/hnatri/SPP1_mouse_scRNAseq/docs/"

@@ -6,10 +6,11 @@
 ##SBATCH --mail-user=hnatri@tgen.org # send-to address
 #SBATCH -n 1
 #SBATCH -N 1
-#SBATCH --cpus-per-task=16
+#SBATCH -p bigmem
+#SBATCH --cpus-per-task=8
 #SBATCH --mem=600G
 ##SBATCH --part=hmem
-#SBATCH -t 5-0:00:00
+#SBATCH -t 1-0:00:00
 
 export SIMG_FILE_NAME=rstudio-4.3.0-4-with_modules.sif
 
@@ -101,6 +102,6 @@ fi
 
 module load singularity;
 
-RSTUDIO_PASSWORD=$PASSWORD singularity exec -B /tgen_labs,/opt,$RSTMP:/tmp,$RSLIB:/var/lib/rstudio-server/,$RSRUN:/var/run/rstudio-server/,${RPRIHOME}/.Renviron:$HOME/.Renviron,${RPRIHOME}/.rstudio:$HOME/.rstudio,${RPRIHOME}/.config:$HOME/.config $SIMG_IMAGE R CMD BATCH escape_GSEA.R
+RSTUDIO_PASSWORD=$PASSWORD singularity exec -B /tgen_labs,/opt,$RSTMP:/tmp,$RSLIB:/var/lib/rstudio-server/,$RSRUN:/var/run/rstudio-server/,${RPRIHOME}/.Renviron:$HOME/.Renviron,${RPRIHOME}/.rstudio:$HOME/.rstudio,${RPRIHOME}/.config:$HOME/.config $SIMG_IMAGE R CMD BATCH scGSVA.R
 
 

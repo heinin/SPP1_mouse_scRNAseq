@@ -42,44 +42,8 @@ head(seurat_data@meta.data)
 DimPlot(seurat_data,
         group.by = "integratedSCTsnn_res.0.8")
 
-# Gene sets
-gs4_deauth()
-genesets  <- gs4_get("https://docs.google.com/spreadsheets/d/127J6C4KF7uBGKUnrPuC1mcsb_wNCN6k1zXKSCbJ6q0M/edit?usp=sharing")
-genesets <- read_sheet(genesets, sheet = "Myeloid modules")
-
 #==============================================================================#
-# Run scGSVA
+# Run GSEA
 #==============================================================================#
 
-# scGSVA analysis
-module_annot <- buildAnnot(species="mouse", keytype="SYMBOL", anntype="GO")
-module_annot@anntype <- "custom"
-module_annot@keytype
-
-names(module_annot)
-typeof(module_annot@annot)
-head(module_annot@annot)
-
-module_annot@annot <- genesets
-
-module_annot@annot$Dummy <- module_annot@annot$module
-module_annot@annot <- as.data.frame(module_annot@annot)
-colnames(module_annot@annot) <- c("GeneID", "Dummy", "Annot")
-
-DefaultAssay(seurat_data) <- "RNA"
-res <- scgsva(seurat_data,
-              annot = module_annot,
-              verbose = T)
-
-res_df <- as.data.frame(res)
-
-rownames(res_df)
-
-identical(rownames(res_df), colnames(seurat_data))
-
-seurat_data$DAM <- res_df$DAM
-seurat_data$Homeostatic <- res_df$Homeostatic
-
-
-saveRDS(seurat_data, "/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15.rds_scGSEAmicroglia.rds")
 
