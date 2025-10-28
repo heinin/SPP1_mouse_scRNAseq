@@ -44,7 +44,7 @@ Annotations were updated after subclustering and annotating myeloid and lymphoid
 
 ```{r, message = F, warning = F, results = 'hide', fig.width = 6, fig.height = 6}
 
-seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_granular_annot.rds")
+seurat_data <- readRDS("/tgen_labs/banovich/BCTCSF/SPP1_mouse_scRNAseq/scRNAseq_Seurat_dim8_nCount1k_nFeature500_dblrate15_scGSEAmodules_reclustered_refAnnot.rds")
 
 # Updating annotations
 #seurat_data$annot <- mapvalues(x = seurat_data$sub.cluster,
@@ -90,7 +90,7 @@ DimPlot(seurat_data,
 
 UMAPs of cell types by group
 
-```{r, message = F, warning = F, fig.width = 10, fig.height = 4, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 10, fig.height = 4, results = 'hide', eval = F}
 
 DimPlot(seurat_data,
         group.by = "annot_granular",
@@ -106,7 +106,7 @@ DimPlot(seurat_data,
 
 ## Cell type proportions
 
-```{r, message = F, warning = F, results = 'hide', fig.width = 8, fig.height = 5}
+```{r, message = F, warning = F, results = 'hide', fig.width = 8, fig.height = 5, eval = T}
 
 create_barplot(seurat_data,
                group_var = "Sample",
@@ -121,7 +121,7 @@ create_barplot(seurat_data,
 
 Using scProportionTest. The first group (for example, CAR in "CAR vs. CTRL") gets positive values.
 
-```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide'}
+```{r, message = F, warning = F, fig.width = 4, fig.height = 4, results = 'hide', eval = F}
 
 prop_test <- sc_utils(seurat_data)
 
@@ -179,11 +179,107 @@ perm_plot + scale_colour_manual(values = c("tomato", "azure2")) + NoLegend() + g
 
 ```
 
+## Comparing gene expression levels
+
+## Mouse modules
+
+```{r, message = F, warning = F, fig.width = 10, fig.height = 10, results = 'hide'}
+
+VlnPlot(seurat_data,
+        features =  c("DAM", "Homeostatic", "MHC_I_machinery", "MHC_II_machinery", "Costimulation_APCB", "Adhesion_immunesynapse"),
+        group.by = "orig.ident",
+        ncol = 2,
+        pt.size = 0)
+
+```
+
+### ANOVA and Tukey HSD
+
+DAM
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 8}
+
+model <- aov(DAM ~ orig.ident, data = seurat_data@meta.data)
+summary(model)
+
+TukeyHSD(model)
+
+```
+
+Homeostatic
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 8}
+
+model <- aov(Homeostatic ~ orig.ident, data = seurat_data@meta.data)
+summary(model)
+
+TukeyHSD(model)
+
+```
+
+MHC_I_machinery
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 8}
+
+model <- aov(MHC_I_machinery ~ orig.ident, data = seurat_data@meta.data)
+summary(model)
+
+TukeyHSD(model)
+
+```
+
+MHC_II_machinery
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 8}
+
+model <- aov(MHC_II_machinery ~ orig.ident, data = seurat_data@meta.data)
+summary(model)
+
+TukeyHSD(model)
+
+```
+
+Costimulation_APCB
+
+```{r, message = F, warning = F, fig.width = 10, fig.height = 6}
+
+model <- aov(Costimulation_APCB ~ orig.ident, data = seurat_data@meta.data)
+summary(model)
+
+TukeyHSD(model)
+
+```
+
+Adhesion_immunesynapse
+
+```{r, message = F, warning = F, fig.width = 12, fig.height = 8}
+
+model <- aov(Adhesion_immunesynapse ~ orig.ident, data = seurat_data@meta.data)
+summary(model)
+
+TukeyHSD(model)
+
+```
+
+```{r, message = F, warning = F, fig.width = 14, fig.height = 10, results = 'hide', eval = F}
+
+VlnPlot(seurat_data,
+        features =  c("DAM", "Homeostatic", "MHC_I_machinery", "MHC_II_machinery", "Costimulation_APCB", "Adhesion_immunesynapse"),
+        group.by = "snn_res.0.8",
+        split.by = "orig.ident",
+        ncol = 1,
+        pt.size = 0)
+
+```
+
 ## DEGs by cell population
 
 ### Myeloid
 
 ```{r, message = F, warning = F, results = 'hide', fig.width = 4, fig.height = 4}
+
+# Rscript -e "rmarkdown::render('comparative_analysis.Rmd')"
+# Then "mv *.html /home/hnatri/SPP1_mouse_scRNAseq/docs/"
 
 
 ```
